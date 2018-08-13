@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lonton.dsms.base.mapper.SecurityMapper" >
+	<resultMap id="staffMap" type="com.lonton.dsms.base.vo.User" >
+		<id property="staffId" column="staff_id" jdbcType="VARCHAR" />
+		<result property="staffCode" column="staff_code" jdbcType="VARCHAR" />
+		<result property="staffName" column="staff_name" jdbcType="VARCHAR" />
+		<result property="loginName" column="login_name" jdbcType="VARCHAR" />
+		<result property="password" column="password" jdbcType="VARCHAR"/>
+		<result property="orgId" column="org_id" jdbcType="VARCHAR"/>
+		<result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+		<result property="userType" column="user_type" jdbcType="VARCHAR" />
+		<result property="status" column="status" jdbcType="VARCHAR" />
+		<result property="idCardNo" column="id_card_no" jdbcType="VARCHAR" />
+		<result property="birthday" column="birthday" jdbcType="VARCHAR"/>
+		<result property="sex" column="sex" jdbcType="VARCHAR"/>
+		<result property="phone" column="phone" jdbcType="VARCHAR" />
+		<result property="email" column="email" jdbcType="VARCHAR"/>
+		<result property="address" column="address" jdbcType="VARCHAR" />
+		<result property="updateUser" column="update_user" jdbcType="VARCHAR" />
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="java.sql.Date"/>
+		<result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR" />
+		<result property="lockTime" column="lock_time" jdbcType="TIMESTAMP" javaType="java.sql.Date"/>
+		
+		<collection property="roles" ofType="com.lonton.dsms.base.vo.Role">
+			<id property="roleId" column="role_id" jdbcType="VARCHAR"/>
+			<result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+			<result property="description" column="description" jdbcType="VARCHAR"/> 
+			<result property="orgClass" column="org_class" jdbcType="VARCHAR"/>
+			<result property="ext1" column="ext1" jdbcType="VARCHAR"/>
+			<result property="ext2" column="ext2" jdbcType="VARCHAR"/>
+			<result property="ext3" column="ext3" jdbcType="VARCHAR"/>
+			<result property="updateUser" column="role_update_user" jdbcType="VARCHAR" />
+			<result property="updateTime" column="role_update_time" jdbcType="TIMESTAMP" javaType="java.sql.Date"/>
+			<result property="deleteFlag" column="role_delete_flag" jdbcType="VARCHAR" />
+		</collection>
+	</resultMap>
+	
+	<resultMap id="urlWithRolesMap" type="com.lonton.dsms.base.vo.UrlWithRoles" >
+		<id property="url" column="url" jdbcType="VARCHAR" />
+		<collection property="roleIds" column="role_id" jdbcType="VARCHAR" javaType="list" ofType="String"/>
+	</resultMap>
+	
+	<resultMap id="resMap" type="com.lonton.dsms.base.vo.Res" >
+		<id property="resId" column="res_id" jdbcType="VARCHAR" />
+		<result property="resCode" column="RES_CODE" jdbcType="VARCHAR" />
+		<result property="resName" column="RES_NAME" jdbcType="VARCHAR" />
+		<result property="resType" column="RES_TYPE" jdbcType="VARCHAR" />
+		<result property="resUrl" column="RES_URL" jdbcType="VARCHAR"/>
+		<result property="relative" column="RELATIVE" jdbcType="VARCHAR"/>
+		<result property="parentId" column="PARENT_ID" jdbcType="VARCHAR"/>
+		<result property="treePath" column="TREE_PATH" jdbcType="VARCHAR"/>
+		<result property="resOrder" column="RES_ORDER" jdbcType="VARCHAR"/>
+		<result property="resIcon" column="RES_ICON" jdbcType="VARCHAR"/>
+		<result property="available" column="AVAILABLE" jdbcType="VARCHAR"/>
+		<result property="visible" column="VISIBLE" jdbcType="VARCHAR"/>
+		<result property="updateUser" column="update_user" jdbcType="VARCHAR" />
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="java.sql.Date"/>
+	</resultMap>
+	
+	<!--  
+	<select id="loadUserByUsername" parameterType="java.lang.String" resultMap="staffMap" >
+		select 
+			s.staff_id, s.staff_code, s.staff_name, s.login_name, s.password, 
+				s.org_id, s.user_type, s.status, s.id_card_no, s.birthday, s.sex, s.phone,s.email, s.address, 
+				s.update_user, s.update_time, s.delete_flag, s.lock_time,
+			r.*
+		from a_staff s, 
+			(select 
+				r.role_id,	r.role_name,	r.description,	r.org_class,
+				r.ext1, r.ext2, r.ext3,
+				r.update_user as role_update_user, 	r.update_time as role_update_time, r.delete_flag as role_delete_flag,
+				rs.staff_id
+			from a_role r, a_role_staff rs
+			where r.role_id = rs.role_id
+			and r.delete_flag = '1') r
+		where s.login_name = #{_parameter}
+		and s.staff_id = r.staff_id(+)
+		order by s.staff_id
+	</select>
+	-->
+	<select id="loadUserByUsername" parameterType="java.lang.String" resultMap="staffMap" >
+		SELECT 
+			s.staff_id, s.staff_code, s.staff_name, s.login_name, s.password, 
+			s.org_id, s.user_type, s.status, s.id_card_no, s.birthday, s.sex, s.phone,s.email, s.address, 
+			s.update_user, s.update_time, s.delete_flag, s.lock_time,
+			r.*
+		FROM a_staff s LEFT JOIN 
+			(
+				SELECT 
+					r.role_id, r.role_name, r.description, r.org_class,
+					r.ext1, r.ext2, r.ext3,
+					r.update_user as role_update_user, r.update_time as role_update_time, r.delete_flag as role_delete_flag,
+					rs.staff_id
+				from 
+					a_role r LEFT JOIN a_role_staff rs
+				ON 
+					r.role_id = rs.role_id
+				where
+					r.delete_flag = '1'
+			) r
+		ON 
+			s.staff_id = r.staff_id
+		WHERE 
+			s.login_name = #{_parameter}
+		ORDER BY 
+			s.staff_id
+	</select>
+	
+	<!--  
+	<select id="loadUrlWithRoles" resultMap="urlWithRolesMap">
+		select 
+			re.res_url as url, r.role_id
+		from a_role r, a_arcgrant a, a_res re
+		where 
+			r.role_id = a.role_id and a.res_id = re.res_id
+			and r.delete_flag = '1' 
+			and re.res_type in('CD','LJ') and re.relative ='1'
+			and re.res_url is not null
+		union 
+		select 
+			u.url_path as url, r.role_id
+		from a_role r, a_arcgrant a, a_res re, a_url u, a_res_url ru
+		where 
+			r.role_id = a.role_id and a.res_id = re.res_id
+			and r.delete_flag = '1' 
+			and re.res_id = ru.res_id and ru.url_id = u.url_id
+			and re.res_url is not null
+	</select>
+	-->
+	<select id="loadUrlWithRoles" resultMap="urlWithRolesMap">
+		SELECT 
+			re.res_url as url, r.role_id
+		FROM 
+			a_role r, a_arcgrant a, a_res re
+		WHERE 
+			r.role_id = a.role_id and a.res_id = re.res_id
+			AND r.delete_flag = '1' 
+			AND re.res_type in('CD','LJ') and re.relative ='1'
+			AND re.res_url is not null
+	</select>
+	
+	<!--  
+	<select id="loadResByRoleId" parameterType="java.lang.String" resultMap="resMap">
+		<![CDATA[
+		select 
+			r.* 
+		from 
+			a_res r, a_role ro, a_arcgrant a
+		where 
+			r.available = '1'
+			and r.res_id= a.res_id
+			and a.role_id = ro.role_id and a.delete_flag = '1'
+			and (a.effect_time<=current_timestamp or a.effect_time is null) and (a.expiry_time >=current_timestamp or a.expiry_time is null)
+			and ro.delete_flag = '1' and ro.role_id = #{_parameter}
+		order by tree_path, res_order
+		]]>
+	</select>
+	-->
+	<select id="loadResByRoleId" parameterType="java.lang.String" resultMap="resMap">
+		<![CDATA[
+		SELECT 
+			r.* 
+		FROM 
+			a_res r, a_role ro, a_arcgrant a
+		WHERE 
+			r.available = '1'
+			AND r.res_id= a.res_id
+			AND a.role_id = ro.role_id and a.delete_flag = '1'
+			AND (a.effect_time<=current_timestamp or a.effect_time is null) and (a.expiry_time >=current_timestamp or a.expiry_time is null)
+			AND ro.delete_flag = '1' and ro.role_id = #{_parameter}
+		ORDER BY tree_path, res_order
+		]]>
+	</select>
+	
+	<select id="checkLogin" parameterType="java.util.HashMap" resultType="int">
+	    SELECT
+	    	COUNT(*)
+	    FROM
+	    	(
+		    SELECT
+		    	*
+		    FROM
+		    	A_STAFF
+		    WHERE
+		    	LOGIN_NAME = #{username}
+		    	AND PASSWORD = #{password}
+		    ) T
+	</select>
+	
+	<!-- 获取用户对应的员工基本信息和角色信息 -->
+	<select id="getLoginUserInfo" parameterType="java.util.HashMap" resultMap="staffMap">
+	    SELECT
+	    	T.*,
+	    	P.ROLE_NAME
+	    FROM
+	    	(
+		    SELECT
+		    	S.*,
+		    	RS.ROLE_ID
+		    FROM
+		    	(
+			    SELECT
+			    	*
+			    FROM
+			    	A_STAFF
+			    WHERE
+			    	LOGIN_NAME = #{username}
+		    	) S
+		    	LEFT JOIN A_ROLE_STAFF RS ON S.STAFF_ID = RS.STAFF_ID
+	    	) T
+	    	LEFT JOIN A_ROLE P ON T.ROLE_ID = P.ROLE_ID
+	</select>
+	
+	<!-- 根据用户角色加载资源 -->
+	<select id="loadResByUserRole" parameterType="java.util.List" resultMap="resMap">
+	    SELECT
+	    	*
+	    FROM
+	    	A_RES
+	    WHERE 
+	    	RES_ID IN
+	    	(
+		    SELECT DISTINCT
+		    	RES_ID
+		    FROM
+		    	A_ARCGRANT
+		    WHERE
+		    	ROLE_ID IN
+		    	<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+		    	    #{item.roleId}
+		    	</foreach>
+		    )
+	</select>
+</mapper>

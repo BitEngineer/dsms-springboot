@@ -1,0 +1,26 @@
+server:
+  port: 8090
+  context-path: /dsms
+
+spring:
+  # 数据源，使用tomcat默认数据源
+  datasource:
+    name: dsmsDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/dsms?characterEncoding=utf8
+    username: root
+    password: 5991215
+  # spring-boot-admin-server 监控
+#  boot:
+#    admin:
+#      url: http://localhost:8090/dsms-monitor
+
+mybatis:
+  mapper-locations: classpath:mybatis/*/*.xml
+# type-aliases-package: com.winter.model
+
+# actuator 监控
+#management:
+#  security:
+#    enabled: false
+#  context-path: /monitor

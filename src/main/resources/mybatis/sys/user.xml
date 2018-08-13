@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lonton.dsms.sys.mapper.UserMapper" >
+
+	<resultMap id="BaseStaffResultMap" type="com.lonton.dsms.sys.bean.Staff" >
+		<!-- A_Staff 表字段映射 -->
+		<result property="staffId" column="staff_id" jdbcType="VARCHAR" />
+		<result property="staffCode" column="staff_code" jdbcType="VARCHAR" />
+		<result property="staffName" column="staff_name" jdbcType="VARCHAR" />
+		<result property="loginName" column="login_name" jdbcType="VARCHAR" />
+		<result property="password" column="password" jdbcType="VARCHAR"/>
+		<result property="orgId" column="org_id" jdbcType="VARCHAR"/>
+		<result property="userType" column="user_type" jdbcType="VARCHAR"/>
+		<result property="status" column="status" jdbcType="VARCHAR"/>
+		<result property="idCardNo" column="id_card_no" jdbcType="VARCHAR" />
+		<result property="birthday" column="birthday" jdbcType="VARCHAR" />
+		<result property="sex" column="sex" jdbcType="VARCHAR" />
+		<result property="phone" column="phone" jdbcType="VARCHAR" />
+		<result property="email" column="email" jdbcType="VARCHAR" />
+		<result property="address" column="address" jdbcType="VARCHAR" />
+		<result property="updateUser" column="update_user" jdbcType="VARCHAR" />
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+		<result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR" />
+		<result property="lockTime" column="lock_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+		<result property="ext1" column="ext1" jdbcType="VARCHAR" />
+		<result property="ext2" column="ext2" jdbcType="VARCHAR" />
+		<result property="ext3" column="ext3" jdbcType="VARCHAR" />
+		<result property="ext4" column="ext4" jdbcType="VARCHAR" />
+		<result property="ext5" column="ext5" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="BaseResultMap" type="com.lonton.dsms.sys.bean.StaffQueryDTO">
+		<!-- A_Staff 表字段映射 -->
+		<result property="staffId" column="staff_id" jdbcType="VARCHAR" />
+		<result property="staffCode" column="staff_code" jdbcType="VARCHAR" />
+		<result property="staffName" column="staff_name" jdbcType="VARCHAR" />
+		<result property="loginName" column="login_name" jdbcType="VARCHAR" />
+		<result property="password" column="password" jdbcType="VARCHAR"/>
+		<result property="orgId" column="org_id" jdbcType="VARCHAR"/>
+		<result property="userType" column="user_type" jdbcType="VARCHAR"/>
+		<result property="status" column="status" jdbcType="VARCHAR"/>
+		<result property="idCardNo" column="id_card_no" jdbcType="VARCHAR" />
+		<result property="birthday" column="birthday" jdbcType="VARCHAR" />
+		<result property="sex" column="sex" jdbcType="VARCHAR" />
+		<result property="phone" column="phone" jdbcType="VARCHAR" />
+		<result property="email" column="email" jdbcType="VARCHAR" />
+		<result property="address" column="address" jdbcType="VARCHAR" />
+		<result property="updateUser" column="update_user" jdbcType="VARCHAR" />
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+		<result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR" />
+		<result property="lockTime" column="lock_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+		<result property="ext1" column="ext1" jdbcType="VARCHAR" />
+		<result property="ext2" column="ext2" jdbcType="VARCHAR" />
+		<result property="ext3" column="ext3" jdbcType="VARCHAR" />
+		<result property="ext4" column="ext4" jdbcType="VARCHAR" />
+		<result property="ext5" column="ext5" jdbcType="VARCHAR" />
+		<!-- A_ORG 表中的字段映射 -->
+		<result property="orgName" column="org_name" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+		s.staff_code, s.staff_name, s.login_name, s.password, s.status, s.user_type, 
+		s.org_id, s.id_card_no, s.birthday, s.sex, s.phone, s.email, s.address, s.update_user, s.update_time, s.delete_flag, s.lock_time
+	</sql>
+	
+	<!-- 分页查询 -->
+	<select id="selectPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT
+			s.staff_id, 
+			o.org_name,
+			<include refid="Base_Column_List" />
+	  	FROM
+	  			a_staff s LEFT JOIN a_org o
+	  	ON
+	  		s.org_id = o.org_id
+		<where>
+			<if test="staffName != null and staffName != ''">
+				s.staff_name like CONCAT(CONCAT('%', #{staffName}),'%') 
+			</if>
+			<if test="staffCode != null and staffCode != ''">
+				and s.staff_code = #{staffCode}
+			</if>
+			<if test="orgId != null and orgId != ''">
+				and s.org_id = #{orgId}
+			</if>
+			<if test="status != null and status != ''">
+				and s.status = #{status}
+			</if>
+			<if test="deleteFlag != null and deleteFlag != ''">
+				and s.delete_flag = #{deleteFlag}
+			</if>
+			<if test="deleteFlag == null or deleteFlag == ''">
+				and s.delete_flag = '1'
+			</if>
+		</where>
+		ORDER BY
+  			update_time
+		LIMIT 
+			#{start} , #{pageSize}
+	</select>
+	
+	<!-- 分页查询时，查询符合条件的总记录数 -->
+	<select id="selectPageTotal" parameterType="java.util.Map" resultType="int">
+		SELECT COUNT(staff_id) FROM
+		(
+			SELECT
+				s.staff_id, 
+				o.org_name,
+				<include refid="Base_Column_List" />
+		  	FROM
+		  			a_staff s LEFT JOIN a_org o
+		  	ON
+		  		s.org_id = o.org_id
+			<where>
+				<if test="staffName != null and staffName != ''">
+					s.staff_name like CONCAT(CONCAT('%', #{staffName}),'%') 
+				</if>
+				<if test="staffCode != null and staffCode != ''">
+					and s.staff_code = #{staffCode}
+				</if>
+				<if test="orgId != null and orgId != ''">
+					and s.org_id = #{orgId}
+				</if>
+				<if test="status != null and status != ''">
+					and s.status = #{status}
+				</if>
+				<if test="deleteFlag != null and deleteFlag != ''">
+					and s.delete_flag = #{deleteFlag}
+				</if>
+				<if test="deleteFlag == null or deleteFlag == ''">
+					and s.delete_flag = '1'
+				</if>
+			</where>
+		) T
+	</select>
+	
+	<!-- resultType，javabean字段和表字段不对应 -->
+	<select id="selectObject" parameterType="java.lang.String" resultMap="BaseStaffResultMap">
+		SELECT * FROM a_staff WHERE staff_id = #{staffId}
+	</select>
+	
+	<!-- 单表查询，根据任意条件 -->
+	<select id="select" parameterType="com.lonton.dsms.sys.bean.StaffQueryDTO" resultMap="BaseResultMap">
+		SELECT
+			*
+	  	FROM
+	  		a_staff
+		<where>
+			<if test="staffId != null and staffId != ''">
+				staff_id = #{staffId}
+			</if>
+			<if test="staffCode != null and staffCode != ''">
+				and staff_code = #{staffCode}
+			</if>
+			<if test="staffName != null and staffName != ''">
+				and staff_name = #{staffName}
+			</if>
+			<if test="loginName != null and loginName != ''">
+				and login_name = #{loginName}
+			</if>
+			<if test="orgId != null and orgId != ''">
+				and org_id = #{orgId}
+			</if>
+			<if test="status != null and status != ''">
+				and status = #{status}
+			</if>
+			<if test="userType != null and userType != ''">
+				and user_type = #{userType}
+			</if>
+			<if test="deleteFlag != null and deleteFlag != ''">
+				and delete_flag = #{deleteFlag}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据staff_id更新记录,不能更新staff_id -->
+  	<update id="updateByStaffId" parameterType="hashMap">
+  		UPDATE 
+  			a_staff
+  		<set>
+  			update_time = CURRENT_TIMESTAMP
+  			, update_user = #{updateUser}
+  			<if test="staffName != null and staffName != ''">
+  				, staff_name = #{staffName}
+  			</if>
+  			<if test="staffCode != null and staffCode != ''">
+  				, staff_code = #{staffCode}
+  			</if>
+  			<if test="loginName != null and loginName != ''">
+  				, login_name = #{loginName}
+  			</if>
+  			<if test="password != null and password != ''">
+  				, password = #{password}
+  			</if>
+  			<if test="orgId != null and orgId != ''">
+  				, org_id = #{orgId}
+  			</if>
+  			<if test="userType != null and userType != ''">
+  				, user_type = #{userType}
+  			</if>
+  			<if test="sex != null and sex != ''">
+  				, sex = #{sex}
+  			</if>
+  			<if test="birthday != null and birthday != ''">
+  				, birthday = #{birthday}
+  			</if>
+  			<if test="idCardNo != null and idCardNo != ''">
+  				, id_card_no = #{idCardNo}
+  			</if>
+  			<if test="status != null and status != ''">
+  				, status = #{status}
+  			</if>
+  			<if test="phone != null and phone != ''">
+  				, phone = #{phone}
+  			</if>
+  			<if test="email != null and email != ''">
+  				, email = #{email}
+  			</if>
+  			<if test="address != null and address != ''">
+  				, address = #{address}
+  			</if>
+  			<if test="deleteFlag != null and deleteFlag != ''">
+  				, delete_flag = #{deleteFlag}
+  			</if>
+  			<if test="lockTime != null and lockTime != ''">
+  				, lock_time = str_do_date(#{lockTime, jdbcType=VARCHAR},'%Y-%m-%d %H:%i:%s')
+  			</if>
+  			<if test="lockTime == null">
+  				, lock_time = null
+  			</if>
+  		</set>
+  		WHERE 
+  			staff_id = #{staffId}
+  	</update>
+  	
+  	<!-- 插入记录 -->
+  	
+  	<insert id="insert" parameterType="hashMap" >
+  		INSERT INTO a_staff
+	  	(
+	  		staff_id
+	  		, staff_code
+	  		, staff_name
+	  		, login_name
+	  		, password
+	  		, org_id
+	  		, user_type
+	  		, status
+	  		<if test="idCardNo != null and idCardNo != '' ">
+				, id_card_no
+			</if>
+			<if test="birthday != null and birthday != '' ">
+				, birthday
+			</if>
+			<if test="sex != null and sex != '' ">
+				, sex
+			</if>
+			<if test="phone != null and phone != '' ">
+				, phone
+			</if>
+			<if test="email != null and email != '' ">
+				, email
+			</if>
+			<if test="address != null and address != '' ">
+				, address
+			</if>
+			<if test="updateUser != null and updateUser != '' ">
+				, update_user
+			</if>
+			<if test="updateTime != null and updateTime != '' ">
+				, update_time
+			</if>
+			<if test="deleteFlag != null and deleteFlag != '' ">
+				, delete_flag
+			</if>
+			<if test="lockTime != null and lockTime != '' ">
+				, lock_time
+			</if>
+	  	)
+  		values(
+  			#{staffId, jdbcType=VARCHAR}
+  			, #{staffCode, jdbcType=VARCHAR}
+  			, #{staffName, jdbcType=VARCHAR}
+  			, #{loginName, jdbcType=VARCHAR}
+  			, #{password, jdbcType=VARCHAR}
+			, #{orgId, jdbcType=VARCHAR}
+			, #{userType, jdbcType=VARCHAR}
+			, #{status, jdbcType=VARCHAR}
+			<if test="idCardNo != null and idCardNo != '' ">
+				, #{idCardNo, jdbcType=VARCHAR}
+			</if>
+			<if test="birthday != null and birthday != '' ">
+				, #{birthday, jdbcType=VARCHAR}
+			</if>
+			<if test="sex != null and sex != '' ">
+				, #{sex, jdbcType=VARCHAR}
+			</if>
+			<if test="phone != null and phone != '' ">
+				, #{phone, jdbcType=VARCHAR}
+			</if>
+			<if test="email != null and email != '' ">
+				, #{email, jdbcType=VARCHAR}
+			</if>
+			<if test="address != null and address != '' ">
+				, #{address, jdbcType=VARCHAR}
+			</if>
+			<if test="updateUser != null and updateUser != '' ">
+				, #{updateUser, jdbcType=VARCHAR}
+			</if>
+			<if test="updateTime != null and updateTime != '' ">
+				, #{updateTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="deleteFlag != null and deleteFlag != '' ">
+				, #{deleteFlag, jdbcType=VARCHAR}
+			</if>
+			<if test="lockTime != null and lockTime != '' ">
+				, #{lockTime, jdbcType=TIMESTAMP}
+			</if>
+  		)
+  	</insert>
+  	
+  	<!--  
+  	<insert id="insert" parameterType="hashMap" >
+  		INSERT INTO a_staff
+	  	(
+	  		staff_id
+	  		, staff_code
+	  		, staff_name
+	  		, login_name
+	  		, password
+	  		, org_id
+	  		, user_type
+	  		, status
+	  		, id_card_no
+	  		, birthday
+	  		, sex
+	  		, phone
+	  		, email
+	  		, address
+	  		, update_user
+	  		, update_time
+	  		, delete_flag
+	  		, lock_time
+	  	)
+  		values(
+  			#{staffId, jdbcType=VARCHAR}
+  			, #{staffCode, jdbcType=VARCHAR}
+  			, #{staffName, jdbcType=VARCHAR}
+  			, #{loginName, jdbcType=VARCHAR}
+  			, #{password, jdbcType=VARCHAR}
+			, #{orgId, jdbcType=VARCHAR}
+			, #{userType, jdbcType=VARCHAR}
+			, #{status, jdbcType=VARCHAR}
+			<choose>
+				<when test="idCardNo != null and idCardNo != '' ">
+					, #{idCardNo, jdbcType=VARCHAR}
+				</when>
+				<otherwise>
+					, null
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="birthday != null and birthday != '' ">
+					, #{birthday, jdbcType=VARCHAR}
+				</when>
+				<otherwise>
+					, null
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="sex != null and sex != '' ">
+					, #{sex, jdbcType=VARCHAR}
+				</when>
+				<otherwise>
+					, null
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="phone != null and phone != '' ">
+					, #{phone, jdbcType=VARCHAR}
+				</when>
+				<otherwise>
+					, null
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="email != null and email != '' ">
+					, #{email, jdbcType=VARCHAR}
+				</when>
+				<otherwise>
+					, null
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="address != null and address != '' ">
+					, #{address, jdbcType=VARCHAR}
+				</when>
+				<otherwise>
+					, null
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="updateUser != null and updateUser != '' ">
+					, #{updateUser, jdbcType=VARCHAR}
+				</when>
+				<otherwise>
+					, null
+				</otherwise>
+			</choose>
+			, NOW()
+			<choose>
+				<when test="deleteFlag != null and deleteFlag != '' ">
+					, #{deleteFlag, jdbcType=VARCHAR}
+				</when>
+				<otherwise>
+					, null
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="lockTime != null and lockTime != '' ">
+					, STR_TO_DATE(#{lockTime,jdbcType=TIMESTAMP},'%Y-%m-%d %H:%i:%s')
+				</when>
+				<otherwise>
+					, null
+				</otherwise>
+			</choose>
+  		)
+  	</insert>
+  	-->
+  	
+  	<update id="updateStaffOrgId" parameterType="java.util.List">
+    	begin  
+        <foreach collection="list" item="item" index="index" separator=";" >
+            update a_staff
+            <set>
+                org_id = #{item.orgId},
+                update_user = #{item.updateUser},
+                update_time = CURRENT_TIMESTAMP
+            </set>
+            where staff_id = #{item.staffId}
+        </foreach>
+        ;end;
+    </update>
+    
+    <select id="checkLoginName" parameterType="hashMap" resultMap="BaseResultMap">
+    	SELECT
+    		login_name 
+    	FROM 
+    		a_staff 
+    	WHERE 
+    		login_name = #{loginName}
+    </select>
+    
+    <select id="checkStaffCode" parameterType="hashMap" resultMap="BaseResultMap">
+    	SELECT 
+    		staff_code 
+    	FROM 
+    		a_staff 
+    	WHERE 
+    		staff_code = #{staffCode}
+    </select>
+    
+    <select id="checkPassword" parameterType="hashMap" resultMap="BaseResultMap">
+    	SELECT 
+    		staff_code 
+    	FROM 
+    		a_staff 
+    	WHERE 
+    		staff_id = #{staffId} AND
+    		password = #{password}
+    </select>
+	
+</mapper>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lonton.dsms.sys.mapper.CustomRoleMapper" >
+	<resultMap id="roleMap" type="hashMap" >
+		<result property="pkId" column="pk_id" jdbcType="VARCHAR" />
+		<result property="staffId" column="staff_id" jdbcType="VARCHAR" />
+		<result property="roleId" column="role_id" jdbcType="VARCHAR" />
+		<result property="roleName" column="role_name" jdbcType="VARCHAR" />
+		<result property="description" column="description" jdbcType="VARCHAR" />
+		<result property="orgClass" column="org_class" jdbcType="VARCHAR" />
+		<result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR" />
+		<result property="updateUser" column="update_user" jdbcType="VARCHAR" />
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="java.sql.Date"/>
+		<result property="ext1" column="ext1" jdbcType="VARCHAR" />
+		<result property="ext2" column="ext2" jdbcType="VARCHAR" />
+		<result property="ext3" column="ext3" jdbcType="VARCHAR" />
+		<result property="resId" column="res_id" jdbcType="VARCHAR" />
+		<result property="resName" column="res_name" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="TABLE_NAME" >
+		A_ROLE
+	</sql>
+ 
+	<sql id="Base_Column_List" >
+		ROLE_NAME, DESCRIPTION, ORG_CLASS, UPDATE_TIME,DELETE_FLAG, EXT1, EXT2, EXT3
+	</sql>
+	
+	<select id="selectUsed" resultMap="roleMap" parameterType="hashMap">
+		select role_id,role_name,description
+			from a_role 
+			where 
+				role_id in (select role_id from a_role_staff where staff_id = #{staffId})
+	</select>
+	
+	<select id="selectUnusedByPage" resultMap="roleMap" parameterType="hashMap">
+		select * from (
+  		select
+  			*
+  		from (
+  			select role_id,role_name,description,
+  					ROW_NUMBER() OVER(ORDER BY update_time DESC) AS N
+			from a_role
+			where role_id not in 
+					(select role_id from a_role_staff where staff_id = #{staffId})
+			)t
+	  	<![CDATA[
+	  		where t.N <= ${end}
+	  		) t where t.N >= ${start}
+		]]>
+	</select>
+	
+	<select id="selectUnused" resultMap="roleMap" parameterType="hashMap">
+		select role_id,role_name,description
+			from a_role
+			where role_id not in (select role_id from a_role_staff where staff_id = #{staffId})
+	</select>
+	
+	<select id="selectByName" resultMap="roleMap" parameterType="hashMap">
+		select role_id,role_name,description
+			from a_role
+			where role_name like CONCAT(CONCAT('%', #{roleName}),'%')
+	</select>
+	
+	<select id="selectByNamePage" resultMap="roleMap" parameterType="hashMap">
+		select * from (
+  		select
+  			*
+  		from (
+  			select role_id,role_name,description,
+  			ROW_NUMBER() OVER(ORDER BY update_time DESC) AS N
+			from a_role
+			where role_name like CONCAT(CONCAT('%', #{roleName}),'%')
+			)t
+	  	<![CDATA[
+	  		where t.N <= ${end}
+	  		) t where t.N >= ${start}
+		]]>
+	</select>
+
+	<select id="insertIntoStaff" parameterType="java.util.List">
+		insert into a_role_staff 
+		(pk_id,staff_id,role_id,update_user,update_time)
+		<foreach collection="list"  item="item" separator="union all">
+            (SELECT sys_guid(), #{item.staffId},#{item.roleId},#{item.updateUser},CURRENT_TIMESTAMP FROM DUAL)
+        </foreach>
+	</select>
+	
+	<delete id="deleteFromStaff" parameterType="java.util.List">
+		delete from a_role_staff 
+		<where>
+			<foreach collection="list" index="index" item="item" open="(" separator="or" close=")">
+				staff_id = #{item.staffId} and role_id = #{item.roleId}
+			</foreach>
+		</where>
+	</delete>
+	
+	<select id="selectRights" resultMap="roleMap" parameterType="hashMap">
+		select r.res_id,r.res_name
+			from a_arcgrant a join a_res r
+			on a.res_id = r.res_id
+			where a.role_id in 
+				(select role_id from a_role_staff where staff_id = #{staffId})
+	</select>
+	
+	<select id="selectRightsByPage" resultMap="roleMap" parameterType="hashMap">
+		select * from (
+  		select
+  			*
+  		from (
+  			select r.res_id,r.res_name,
+  			ROW_NUMBER() OVER(ORDER BY r.update_time DESC) AS N
+			from a_arcgrant a join a_res r
+			on a.res_id = r.res_id
+			where a.role_id in 
+				(select role_id from a_role_staff where staff_id = #{staffId})
+			)t
+	  	<![CDATA[
+	  		where t.N <= ${end}
+	  		) t where t.N >= ${start}
+		]]>
+	</select>
+	
+	<insert id="insert" parameterType="hashMap" >
+  		insert into 
+	  			<include refid="TABLE_NAME" />	
+  		(ROLE_ID, UPDATE_USER, <include refid="Base_Column_List" />) 
+  		values(
+  			SYS_GUID(), #{updateUser, jdbcType=VARCHAR},
+  			#{roleName, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, 
+			#{orgClass, jdbcType=INTEGER}, CURRENT_TIMESTAMP, 
+			#{deleteFlag, jdbcType=VARCHAR},
+			#{ext1, jdbcType=VARCHAR},
+			#{ext2, jdbcType=VARCHAR},
+			#{ext3, jdbcType=VARCHAR}
+  		)
+  	</insert>
+  	
+	<select id="selectRoleCount" parameterType="hashMap" resultType="int">
+	    SELECT
+	    	COUNT(*)
+	    FROM
+	    	(
+	    	SELECT
+	  			c.ROLE_ID, 
+	  			c.ROLE_NAME,
+	  			c.DESCRIPTION, 
+	  			c.ORG_CLASS, 
+	  			c.UPDATE_TIME,
+	  			c.DELETE_FLAG, 
+	  			c.EXT1,
+	  			c.EXT2, 
+	  			c.EXT3
+				s.staff_name as update_user
+	  		FROM
+	  			<include refid="TABLE_NAME" /> c LEFT JOIN a_staff s
+	  		ON c.update_user = s.staff_id
+	  		WHERE
+	  			1 = 1
+	  			<if test="roleName != null and roleName != ''">
+	  				<if test="roleNameEq != null">
+	  					AND c.role_name = #{roleName}
+	  				</if>
+	  				<if test="roleNameEq == null">
+	  					AND c.role_name LIKE CONCAT(#{roleName}, '%')
+	  				</if>
+	  			</if>
+	  			<if test="deleteFlag != null and deleteFlag != ''">
+					AND c.delete_flag = #{deleteFlag}
+				</if>
+	    	) T
+	</select>
+	
+	<select id="select" parameterType="hashMap" resultMap="roleMap">
+ 		SELECT
+  			c.ROLE_ID, 
+  			c.ROLE_NAME,
+  			c.DESCRIPTION, 
+  			c.ORG_CLASS, 
+  			c.UPDATE_TIME,
+  			c.DELETE_FLAG, 
+  			c.EXT1,
+  			c.EXT2, 
+  			c.EXT3,
+			s.staff_name as update_user
+  		FROM
+  			<include refid="TABLE_NAME" /> c LEFT JOIN a_staff s
+  		ON c.update_user = s.staff_id
+  		WHERE
+  			1 = 1
+  			<if test="roleName != null and roleName != ''">
+  				<if test="roleNameEq != null">
+  					AND c.role_name = #{roleName}
+  				</if>
+  				<if test="roleNameEq == null">
+  					AND c.role_name LIKE CONCAT(#{roleName}, '%')
+  				</if>
+  			</if>
+  			<if test="deleteFlag != null and deleteFlag != ''">
+				AND c.delete_flag = #{deleteFlag}
+			</if>
+		LIMIT
+			#{start},#{pageSize}
+  	</select>
+  	
+  	<update id="update" parameterType="hashMap" >
+  		update 
+  			<include refid="TABLE_NAME" />
+	  	set
+			UPDATE_USER = #{updateUser, jdbcType=VARCHAR}, UPDATE_TIME = CURRENT_TIMESTAMP
+			<if test="roleName != null and roleName != ''">
+  				, ROLE_NAME = #{roleName, jdbcType=VARCHAR}
+  			</if>
+			<if test="description != null and description != ''">
+				, DESCRIPTION = #{description, jdbcType=VARCHAR}
+  			</if>
+			<if test="orgClass != null and orgClass != ''">
+				, ORG_CLASS = #{orgClass, jdbcType=INTEGER}
+  			</if>
+			<if test="ext1 != null and ext1 != ''">
+				, EXT1 = #{ext1, jdbcType=VARCHAR}
+  			</if>
+			<if test="ext2 != null and ext2 != ''">
+				, EXT2 = #{ext2, jdbcType=VARCHAR}
+  			</if>
+			<if test="ext3 != null and ext3 != ''">
+				, EXT3 = #{ext3, jdbcType=VARCHAR}
+  			</if>
+			<if test="deleteFlag != null and deleteFlag != ''">
+				, DELETE_FLAG = #{deleteFlag, jdbcType=VARCHAR}
+  			</if>
+  		where
+  			ROLE_ID = #{roleId}
+  	</update>
+  	
+  	<delete id="delete" parameterType="hashMap">
+  		delete from 
+  			<include refid="TABLE_NAME" />
+  		where
+  			ROLE_ID = #{roleId}
+  	</delete>
+</mapper>

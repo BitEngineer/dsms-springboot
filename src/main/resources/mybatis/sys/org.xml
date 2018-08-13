@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lonton.dsms.sys.mapper.OrgMapper" >
+	<resultMap id="BaseResultMap" type="hashMap" >
+		<result property="orgId" column="org_id" jdbcType="VARCHAR" />
+		<result property="orgCode" column="org_code" jdbcType="VARCHAR" />
+		<result property="orgName" column="org_name" jdbcType="VARCHAR" />
+		<result property="orgFullName" column="org_full_name" jdbcType="VARCHAR" />
+		<result property="orgClass" column="org_class" jdbcType="VARCHAR" />
+		<result property="orgType" column="org_type" jdbcType="VARCHAR" />	
+		<result property="orgOrder" column="org_order" jdbcType="DOUBLE" />	
+		<result property="orgLevel" column="org_level" jdbcType="VARCHAR" />				
+		<result property="establishDate" column="establish_date" jdbcType="DATE" javaType="java.sql.Date" />
+		<result property="revocationDate" column="revocation_date" jdbcType="DATE" javaType="java.sql.Date" />		
+		<result property="contactAddress" column="contact_address" jdbcType="VARCHAR" />		
+		<result property="contactName" column="contact_name" jdbcType="VARCHAR" />		
+		<result property="phone" column="phone" jdbcType="VARCHAR" />		
+		<result property="parentId" column="parent_id" jdbcType="VARCHAR" />	
+		<result property="parentName" column="parent_name" jdbcType="VARCHAR" />
+		<result property="status" column="status" jdbcType="VARCHAR"/>
+		<result property="countryCode" column="country_code" jdbcType="VARCHAR" />		
+		<result property="provinceCode" column="province_code" jdbcType="VARCHAR" />		
+		<result property="cityCode" column="city_code" jdbcType="VARCHAR" />		
+		<result property="countyCode" column="county_code" jdbcType="VARCHAR" />		
+		<result property="directly" column="directly" jdbcType="VARCHAR" />		
+		<result property="treePath" column="tree_path" jdbcType="VARCHAR" />		
+		<result property="updateUser" column="update_user" jdbcType="VARCHAR" />
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="java.sql.Date"/>
+		<result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR" />
+		<result property="ext1" column="ext1" jdbcType="VARCHAR" />
+		<result property="ext2" column="ext2" jdbcType="VARCHAR" />
+		<result property="ext3" column="ext3" jdbcType="VARCHAR" />
+		<result property="ext4" column="ext4" jdbcType="VARCHAR" />
+		<result property="ext5" column="ext5" jdbcType="VARCHAR" />
+	</resultMap>
+ 
+	<sql id="TABLE_NAME" >
+		A_ORG
+	</sql>
+	
+	<sql id="Select_Column_List" >
+		O.ORG_ID,O.ORG_CODE, O.ORG_NAME, O.ORG_FULL_NAME, O.ORG_CLASS, O.ORG_TYPE, O.ORG_ORDER, O.ORG_LEVEL, O.ESTABLISH_DATE, O.REVOCATION_DATE, O.CONTACT_NAME, O.CONTACT_ADDRESS, O.PHONE, O.PARENT_ID, O.STATUS,  O.COUNTRY_CODE, O.PROVINCE_CODE, O.CITY_CODE, O.COUNTY_CODE, O.DIRECTLY, O.TREE_PATH, O.UPDATE_USER, O.UPDATE_TIME, O.DELETE_FLAG, O.EXT1, O.EXT2, O.EXT3, O.EXT4, O.EXT5
+	</sql>
+	
+	<sql id="Base_Column_List" >
+		ORG_ID,ORG_CODE, ORG_NAME, ORG_FULL_NAME, ORG_CLASS, ORG_TYPE, ORG_ORDER, ORG_LEVEL,ESTABLISH_DATE, REVOCATION_DATE, CONTACT_NAME, CONTACT_ADDRESS, PHONE, PARENT_ID, STATUS,  COUNTRY_CODE, PROVINCE_CODE, CITY_CODE, COUNTY_CODE, DIRECTLY, TREE_PATH, UPDATE_USER, UPDATE_TIME, DELETE_FLAG, EXT1, EXT2, EXT3, EXT4, EXT5
+	</sql>
+  	
+  	<!-- 需要返回机构的上级机构名时，要做关联，但关联的效率低，此时可以再做一个不关联的sql，在不需要父机构名时用 -->
+  	<select id="select" resultMap="BaseResultMap" parameterType="hashMap">
+  		SELECT
+  			<include refid="Select_Column_List" />,
+  			P.ORG_NAME AS parent_name
+	  	FROM
+	  		<include refid="TABLE_NAME" /> O LEFT JOIN <include refid="TABLE_NAME" /> P
+	  	ON
+	  		O.PARENT_ID =P.ORG_ID
+	  	WHERE
+	  		1 = 1
+	        <if test="deleteFlag != null and deleteFlag != ''">
+	  			AND O.delete_flag = #{deleteFlag}
+	  		</if>
+	  		<if test="status != null and status != ''">
+	  			AND O.status = #{status}
+	  		</if>
+	  		<if test="orgCode != null and orgCode != ''">
+	  			AND O.org_code = #{orgCode}
+	  		</if>
+	  		<if test="orgName != null and orgName != ''">
+	  			AND O.org_name like  CONCAT(CONCAT('%', #{orgName}),'%')
+	  		</if>
+	  		<if test="parentId != null and parentId != '' ">
+	  			AND O.parent_id = #{parentId}
+	  		</if>
+  		LIMIT
+  			#{start} , #{pageSize}
+  	</select>
+  	
+  	<!-- 不返回父机构名 -->
+  	<select id="selectWithOutParent" resultMap="BaseResultMap" parameterType="hashMap">
+  		SELECT
+  			<include refid="Select_Column_List" />
+	  	FROM
+	  		<include refid="TABLE_NAME" />
+	  	WHERE
+	  		1 = 1
+	        <if test="deleteFlag != null and deleteFlag != ''">
+	  			AND delete_flag = #{deleteFlag}
+	  		</if>
+	  		<if test="status != null and status != ''">
+	  			AND status = #{status}
+	  		</if>
+	  		<if test="orgCode != null and orgCode != ''">
+	  			AND org_code = #{orgCode}
+	  		</if>
+	  		<if test="orgName != null and orgName != ''">
+	  			AND org_name like  CONCAT(CONCAT('%', #{orgName}),'%')
+	  		</if>
+  		LIMIT
+  			#{start} , #{pageSize}
+  	</select>
+  	
+  	<select id="selectOrgByName" resultMap="BaseResultMap">
+  		SELECT 
+  			<include refid="Base_Column_List" />
+  		FROM 
+  			<include refid="TABLE_NAME" /> 
+  		WHERE
+  			org_name like CONCAT(CONCAT('%', #{orgName}),'%')
+  			AND delete_flag = '1'
+  	</select>
+  	
+  	<select id="selectTree" resultMap="BaseResultMap">
+		SELECT
+  			 <include refid="Base_Column_List" />
+  		FROM
+  			<include refid="TABLE_NAME" /> 
+  		WHERE
+  		    delete_flag = '1'
+  	</select>
+  	
+  	<select id="selectTreeByParentId" resultMap="BaseResultMap" parameterType="hashMap">
+  		SELECT
+  			 <include refid="Base_Column_List" />
+  		FROM
+  			<include refid="TABLE_NAME" /> 
+  		WHERE
+  		    delete_flag = '1'
+  		    AND parent_id = #{parentId}
+  	</select>
+	
+  	<insert id="insert" parameterType="hashMap" >
+  		INSERT INTO 
+	  		<include refid="TABLE_NAME" />	
+  		(<include refid="Base_Column_List" />) 
+  		VALUES
+  		(
+  		    #{orgId, jdbcType=VARCHAR},
+  			#{orgCode, jdbcType=VARCHAR}, 
+  			#{orgName, jdbcType=VARCHAR}, 
+  			#{orgFullName, jdbcType=VARCHAR}, 
+  			#{orgClass, jdbcType=VARCHAR}, 
+  			#{orgType, jdbcType=VARCHAR}, 
+  			#{orgOrder, jdbcType=DOUBLE}, 
+  			#{orgLevel, jdbcType=VARCHAR}, 
+  			STR_TO_DATE(#{establishDate,jdbcType=DATE},'%Y-%m-%d'),
+  			STR_TO_DATE(#{revocationDate,jdbcType=DATE},'%Y-%m-%d'),
+   			#{contactAddress, jdbcType=VARCHAR}, 
+   			#{contactName, jdbcType=VARCHAR}, 
+   			#{phone, jdbcType=VARCHAR}, 
+   			#{parentId, jdbcType=VARCHAR},   			
+			#{status, jdbcType=VARCHAR}, 
+			#{countryCode, jdbcType=VARCHAR},
+			#{provinceCode, jdbcType=VARCHAR}, 
+			#{cityCode, jdbcType=VARCHAR},
+			#{countyCode, jdbcType=VARCHAR}, 
+			#{directly, jdbcType=VARCHAR}, 
+			#{treePath, jdbcType=VARCHAR},
+			#{updateUser, jdbcType=VARCHAR}, 
+			CURRENT_TIMESTAMP, 
+			#{deleteFlag, jdbcType=VARCHAR},
+			#{ext1, jdbcType=VARCHAR}, 
+			#{ext2, jdbcType=VARCHAR},
+			#{ext3, jdbcType=VARCHAR}, 
+			#{ext4, jdbcType=VARCHAR},
+			#{ext5, jdbcType=VARCHAR} 
+  		)
+  	</insert>
+  	
+  	<update id="update" parameterType="hashMap">
+  		UPDATE 
+  			<include refid="TABLE_NAME" />
+	  	SET
+			UPDATE_TIME = CURRENT_TIMESTAMP
+			<if test="updateUser != null and updateUser != ''">
+				,UPDATE_USER = #{updateUser, jdbcType=VARCHAR}
+			</if>
+	    	<if test="orgCode != null and orgCode != ''">
+	  			,ORG_CODE = #{orgCode, jdbcType=VARCHAR}
+	  		</if>
+	  		<if test="orgName != null and orgName != ''">
+	  			 ,ORG_NAME = #{orgName, jdbcType=VARCHAR} 
+	  		 </if>
+	  		 <if test="orgFullName != null and orgFullName != ''">
+  				,ORG_FULL_NAME = #{orgFullName, jdbcType=VARCHAR}
+  			</if>	
+  			<if test="orgClass != null and orgClass != ''">
+  				,ORG_CLASS = #{orgClass, jdbcType=VARCHAR}
+  			</if>
+  			<if test="orgType != null and orgType != ''">
+  				,ORG_TYPE = #{orgType, jdbcType=VARCHAR}
+  			</if>
+  			<if test="orgOrder != null and orgOrder != ''">
+  				,ORG_ORDER = #{orgOrder, jdbcType=VARCHAR} 
+  			</if>
+  			<if test="orgLevel != null and orgLevele != ''">
+  				,ORG_LEVEL = #{orgLevel, jdbcType=VARCHAR} 
+  			</if>
+  			<if test="establishDate != null and establishDate != ''">
+  				,ESTABLISH_DATE = to_date(#{establishDate, jdbcType=DATE},'yyyy-mm-dd') 
+  			</if>
+  			<if test="revocationDate != null and revocationDate != ''">
+  				 ,REVOCATION_DATE = to_date(#{revocationDate, jdbcType=DATE},'yyyy-mm-dd')
+  			 </if>
+  			 <if test="contactAddress != null and contactAddress != ''">
+   				,CONTACT_ADDRESS = #{contactAddress, jdbcType=VARCHAR}
+   			</if>
+   			<if test="contactName != null and contactName != ''">
+   				 ,CONTACT_NAME = #{contactName, jdbcType=VARCHAR}
+   			 </if>
+   			 <if test="phone != null and phone != ''">
+   				,PHONE = #{phone, jdbcType=VARCHAR}
+   			</if>
+   			<if test="parentId != null and parentId != ''">
+   				 ,PARENT_ID = #{parentId, jdbcType=VARCHAR}
+   			 </if>
+   			 <if test="status != null and status != ''">  			
+				,STATUS = #{status, jdbcType=VARCHAR}
+			</if>
+			<if test="countryCode != null and countryCode != ''">
+				 ,COUNTRY_CODE = #{countryCode, jdbcType=VARCHAR}
+			 </if>
+			<if test="provinceCode != null and provinceCode != ''">
+				,PROVINCE_CODE = #{provinceCode, jdbcType=VARCHAR}
+			</if>
+			<if test="cityCode != null and cityCode != ''">
+				,CITY_CODE = #{cityCode, jdbcType=VARCHAR}
+			</if>
+			<if test="countyCode != null and countyCode != ''">
+				,COUNTY_CODE = #{countyCode, jdbcType=VARCHAR}
+			</if>
+			<if test="directly != null and directly != ''">
+				,DIRECTLY = #{directly, jdbcType=VARCHAR} 
+			</if>
+			<if test="deleteFlag != null and deleteFlag != ''">
+				,DELETE_FLAG = #{deleteFlag, jdbcType=VARCHAR}
+			</if>
+			<if test="ext1 != null and ext1 != ''">
+				,EXT1 = #{ext1, jdbcType=VARCHAR}
+			</if> 
+			<if test="ext2 != null and ext2 != ''">
+				,EXT2 = #{ext2, jdbcType=VARCHAR}
+			</if>
+			<if test="ext3 != null and ext3 != ''">
+				,EXT3 = #{ext3, jdbcType=VARCHAR}
+			</if>
+			<if test="ext4 != null and ext4 != ''">
+				,EXT4 = #{ext4, jdbcType=VARCHAR}
+			</if> 
+			<if test="ext5 != null and ext5 != ''">
+				,EXT5 = #{ext5, jdbcType=VARCHAR}
+			</if> 
+  		WHERE
+  			ORG_ID = #{orgId}
+  	</update>
+  	
+  	<delete id="delete" parameterType="hashMap">
+  		DELETE FROM 
+  			<include refid="TABLE_NAME" />
+  		WHERE
+  			ORG_ID = #{orgId}
+  	</delete>
+  	
+  	<select id="checkOrgCode" parameterType="hashMap" resultMap="BaseResultMap">
+    	SELECT 
+    		org_code 
+    	FROM 
+    		a_org 
+    	WHERE 
+    		org_code = #{orgCode}
+    </select>
+    
+    <select id="checkOrgName" parameterType="hashMap" resultMap="BaseResultMap">
+    	SELECT 
+    		org_name 
+    	FROM 
+    		a_org 
+    	WHERE 
+    		org_name = #{orgName}
+    </select>
+    
+    <select id="checkOrgFullName" parameterType="hashMap" resultMap="BaseResultMap">
+    	SELECT 
+    		org_full_name 
+    	FROM 
+    		a_org 
+    	WHERE 
+    		org_full_name = #{orgFullName}
+    </select>
+   
+</mapper>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <A_ROLE ROLE_ID="1" ROLE_NAME="系统管理员" DESCRIPTION="系统管理员" ORG_CLASS="1" 
+  	UPDATE_USER="admin" UPDATE_TIME="2017-09-29 17:11:41" DELETE_FLAG="1" EXT1="ext" EXT2="ext" EXT3="ext"/>
+  <A_ROLE ROLE_ID="2" ROLE_NAME="总行管理员" DESCRIPTION="总行管理员" ORG_CLASS="1" 
+  	UPDATE_USER="admin" UPDATE_TIME="2017-09-29 17:12:41" DELETE_FLAG="1" EXT1="ext" EXT2="ext" EXT3="ext"/>
+  <A_ROLE ROLE_ID="3" ROLE_NAME="分行管理员" DESCRIPTION="分行管理员" ORG_CLASS="1" 
+  	UPDATE_USER="admin" UPDATE_TIME="2017-09-29 17:13:41" DELETE_FLAG="1" EXT1="ext" EXT2="ext" EXT3="ext"/>
+  <A_ROLE ROLE_ID="4" ROLE_NAME="总行行政人员" DESCRIPTION="总行行政人员" ORG_CLASS="1" 
+  	UPDATE_USER="admin" UPDATE_TIME="2017-09-29 17:15:41" DELETE_FLAG="1" EXT1="ext" EXT2="ext" EXT3="ext"/>
+  <A_ROLE ROLE_ID="5" ROLE_NAME="分行销售员" DESCRIPTION="分行销售员" ORG_CLASS="2" 
+  	UPDATE_USER="sys" UPDATE_TIME="2017-09-30 17:17:41" DELETE_FLAG="1" EXT1="ext" EXT2="ext" EXT3="ext"/>
+</dataset>
