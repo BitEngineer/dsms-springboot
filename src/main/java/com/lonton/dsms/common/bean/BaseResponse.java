@@ -35,12 +35,20 @@ public class BaseResponse implements Serializable{
 		return new BaseResponse(CODE_200, msg);
 	}
 	
+	public static BaseResponse success(String code, String msg) {
+		return new BaseResponse(code, msg);
+	}
+	
 	public static BaseResponse error() {
 		return new BaseResponse(CODE_500, MSG_500);
 	}
 	
 	public static BaseResponse error(String msg) {
 		return new BaseResponse(CODE_500, msg);
+	}
+	
+	public static BaseResponse error(String code, String msg) {
+		return new BaseResponse(code, msg);
 	}
 	
 	public BaseResponse data(Object data) {

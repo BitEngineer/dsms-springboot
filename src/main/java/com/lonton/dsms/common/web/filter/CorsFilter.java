@@ -14,11 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lonton.dsms.base.vo.User;
-import com.lonton.dsms.common.util.WebUtils;
-
 /**
- * 过滤器：处理session超时的请求
+ * 过滤器：处理跨域请求
  *
  */
 public class CorsFilter implements Filter{
@@ -29,12 +26,12 @@ public class CorsFilter implements Filter{
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain fileterChain)
 			throws IOException, ServletException {
 		
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		httpResponse.setHeader("Access-Control-Allow-Origin", "*");  
-		httpResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");  
-		httpResponse.setHeader("Access-Control-Max-Age", "3600");  
-		httpResponse.setHeader("Access-Control-Allow-Headers", "x-requested-with");  
+		httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+		httpResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		httpResponse.setHeader("Access-Control-Max-Age", "3600");
+//		httpResponse.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+		httpResponse.setHeader("Access-Control-Allow-Headers", "*");
 		
 		// 继续执行请求
 		fileterChain.doFilter(request, response);

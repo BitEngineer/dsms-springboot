@@ -1,7 +1,5 @@
 package com.lonton.dsms.sys.web;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,12 +18,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lonton.dsms.sys.bean.Staff;
 import com.lonton.dsms.sys.bean.StaffQueryDTO;
-import com.lonton.dsms.sys.constants.Constants;
-import com.lonton.dsms.sys.mapper.OrgMapper;
-import com.lonton.dsms.sys.mapper.CustomRoleMapper;
-import com.lonton.dsms.sys.mapper.UserMapper;
 import com.lonton.dsms.sys.service.UserService;
-import com.lonton.dsms.cache.UserCacheDao;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import com.lonton.dsms.common.bean.BaseResponse;
 import com.lonton.dsms.common.bean.PageResponseData;
 import com.lonton.dsms.common.exception.ServiceProcessException;
@@ -39,27 +39,26 @@ import com.lonton.dsms.common.util.WebUtils;
  */
 @Controller
 @RequestMapping(value="/app/user")
+@Api(value="/app/user")
 public class UserController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	@Resource
-	private UserMapper userMapper;
-	@Resource(name="orgMapper")
-	private OrgMapper orgMapper;
-	@Resource
-	private CustomRoleMapper customRoleMapper;
-	
-	@Resource
 	private UserService userService;
-	@Resource
-	private UserCacheDao userCacheDao;
 	
 	@RequestMapping(value="/page", method=RequestMethod.GET)
 	@ResponseBody
+	@ApiOperation(value = "分页查询用户信息")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name="page", value = "页码", required = true, paramType = "query", dataType = "String"),
+		@ApiImplicitParam(name="pageSize", value = "每页的数据量", required = true, paramType = "query", dataType = "String"),
+		@ApiImplicitParam(name="page", value = "用户编码", required = false, paramType = "query", dataType = "String"),
+		@ApiImplicitParam(name="page", value = "用户姓名", required = false, paramType = "query", dataType = "String")
+	})
 	public BaseResponse page(
-			@RequestParam(name="page") String page,
-			@RequestParam(name="pageSize") String pageSize,
+			@RequestParam(name="page", required=true) String page,
+			@RequestParam(name="pageSize", required=true) String pageSize,
 			@RequestParam(name="staffCode", required=false) String staffCode,
 			@RequestParam(name="staffName", required=false) String staffName,
 			HttpServletRequest request) throws Exception {
@@ -77,11 +76,12 @@ public class UserController {
 			logger.error("分页查询用户信息异常", e);
 			return BaseResponse.error();
 		}
-		
 	}
 	
 	@RequestMapping(value="/{staffId}", method=RequestMethod.GET)
 	@ResponseBody
+	@ApiOperation(value = "查询指定用户信息")
+	@ApiImplicitParam(name="staffId", value = "用户id", required = true, paramType = "path", dataType = "String")
 	public BaseResponse query(HttpServletRequest request, @PathVariable(name="staffId") String staffId) {
 		try {
 			Staff resultData = userService.selectObject(staffId);
@@ -96,7 +96,8 @@ public class UserController {
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
 	@ResponseBody
-	public BaseResponse add(Staff staff, HttpServletRequest request) {
+	@ApiOperation(value = "新增用户")
+	public BaseResponse add(@ApiParam @RequestBody Staff staff, HttpServletRequest request) {
 		try {
 			userService.addUser(staff, WebUtils.getCurrLoginUser(request).getStaffId());
 			return BaseResponse.success();
@@ -106,18 +107,10 @@ public class UserController {
 		}
 	}
 
-	/**
-	 * 用户删除
-	 * <p>
-	 * {
-	 *   staffId
-	 * }
-	 * </p>
-	 * @param request
-	 * @return
-	 */
 	@RequestMapping(value="/{staffId}", method=RequestMethod.DELETE)
 	@ResponseBody
+	@ApiOperation(value = "查询指定用户信息")
+	@ApiImplicitParam(name="staffId", value = "用户id", required = true, paramType = "path", dataType = "String")
 	public BaseResponse del(HttpServletRequest request, @PathVariable String staffId) {
 		try {
 			userService.delUser(staffId, WebUtils.getCurrLoginUser(request).getStaffId());
@@ -129,21 +122,15 @@ public class UserController {
 	}
 	
 	/**
-	 * 用户数据更新
-	 * <p>
-	 * {
-	 *  staffId, staffName, loginName, password, orgId, 
-	 *  userType, idCardNo, birthday, sex, phone, 
-	 *  email, address
-	 * }
-	 * </p>
+	 * 用户信息更新
 	 * @param request
 	 * @param staff
 	 * @return
 	 */
 	@RequestMapping(value="", method=RequestMethod.PUT)
 	@ResponseBody
-	public BaseResponse edit(HttpServletRequest request, @RequestParam Staff staff) {
+	@ApiOperation(value = "更新用户信息")
+	public BaseResponse edit(HttpServletRequest request, @ApiParam @RequestBody Staff staff) {
 		try {
 			userService.updateUser(staff, WebUtils.getCurrLoginUser(request).getStaffId());
 			return BaseResponse.success();
@@ -153,202 +140,4 @@ public class UserController {
 		}
 	}
 	
-	
-	
-	@RequestMapping("/findOrg")
-	@ResponseBody
-	public Map<String,Object> findOrg(HttpServletRequest request){
-		Map<String,Object> returnMap = new HashMap<String,Object>();
-		returnMap.put("data", this.orgMapper.selectTree());
-		returnMap.put("success", true);
-		return returnMap;
-	}
-	
-	@RequestMapping("/findOrgByName")
-	@ResponseBody
-	public Map<String,Object> findOrgByName(HttpServletRequest request){
-		Map<String, Object> params = RequestUtil.getRequestParams(request);
-		Map<String,Object> returnMap = new HashMap<String,Object>();
-		returnMap.put("data", this.orgMapper.selectOrgByName(params));
-		returnMap.put("success", true);
-		return returnMap;
-	}
-	
-	@RequestMapping("/searchTree")
-	@ResponseBody
-	public Map<String,Object> searchTree(HttpServletRequest request){
-		Map<String, Object> params = RequestUtil.getRequestParams(request);
-		List<Map<String,Object>> searchOrgs = this.orgMapper.selectOrgByName(params);
-		List<Map<String,Object>> allOrgs = this.orgMapper.selectTree();
-		
-		List<Map<String,Object>> data = new ArrayList<Map<String,Object>>();
-		data.addAll(searchOrgs);
-		
-		for(Map<String,Object> m : searchOrgs){
-			Map<String,Object> currentOrg = m;
-			while(true){
-				if(currentOrg.get("parentId").equals(Constants.ORG_ROOT_PARENT_ID)){
-					break;
-				}
-				for(Map<String,Object> mm : allOrgs){
-					if(mm.get("orgId").equals(currentOrg.get("parentId"))){
-						currentOrg = mm;
-						if(!data.contains(mm)){
-							data.add(mm);
-						}
-					}
-				}
-			}
-		}
-		
-		Map<String,Object> returnMap = new HashMap<String,Object>();
-		returnMap.put("data", data);
-		returnMap.put("success", true);
-		return returnMap;
-	}
-	
-	@RequestMapping("/findOrgByParent")
-	@ResponseBody
-	public Map<String,Object> findOrgByParentId(HttpServletRequest request){
-		Map<String,Object> params = RequestUtil.getRequestParams(request);
-		
-		Map<String,Object> returnMap = new HashMap<String,Object>();
-		returnMap.put("data", this.orgMapper.selectTreeByParentId(params));
-		returnMap.put("success", true);
-		return returnMap;
-	}
-	
-	@RequestMapping("/findUsedRoles")
-	@ResponseBody
-	public Map<String, Object> findUsed(HttpServletRequest request) {
-		Map<String, Object> params = RequestUtil.getRequestParams(request);
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		returnMap.put("success", true);
-		returnMap.put("data", this.customRoleMapper.selectUsed(params));
-		return returnMap;
-	}
-	
-	@RequestMapping("/findUnusedRoles")
-	@ResponseBody
-	public Map<String, Object> findUnsed(HttpServletRequest request) {
-		Map<String, Object> params = RequestUtil.getRequestParams(request);
-		int pageNo = Integer.parseInt(params.get("page") + "");
-		int rows = Integer.parseInt(params.get("rows") + "");
-		params.put("start", (pageNo - 1) * rows + 1);
-		params.put("end", pageNo * rows);
-		
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		returnMap.put("success", true);
-		returnMap.put("data", this.customRoleMapper.selectUnusedByPage(params));
-		return returnMap;
-	}
-	
-	@RequestMapping("/searchRoles")
-	@ResponseBody
-	public Map<String, Object> searchRoles(HttpServletRequest request) {
-		Map<String, Object> params = RequestUtil.getRequestParams(request);
-		int pageNo = Integer.parseInt(params.get("page") + "");
-		int rows = Integer.parseInt(params.get("rows") + "");
-		params.put("start", (pageNo - 1) * rows + 1);
-		params.put("end", pageNo * rows);
-		
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		returnMap.put("success", true);
-		returnMap.put("data", this.customRoleMapper.selectByNamePage(params));
-		return returnMap;
-	}
-	
-	@RequestMapping("/manageRoles")
-	@ResponseBody
-	public Map<String, Object> manageRoles(HttpServletRequest request) {
-		Map<String, Object> params = RequestUtil.getRequestParams(request);
-		String staffId = (String) params.get("staffId");
-		String addRoles = (String) params.get("addRoles");
-		String delRoles = (String) params.get("delRoles");
-		
-		if(!"".equals(addRoles)){
-			String[] addRoleArr = addRoles.split(",");
-			
-			//获取当前登录用户
-			Staff staff = (Staff) WebUtils.getCurrLoginUser(request);
-			String updateUser = staff.getLoginName();
-			
-			List<Map<String,Object>> addParams = new ArrayList<Map<String,Object>>();
-			for(String s : addRoleArr){
-				Map<String,Object> m = new HashMap<String,Object>();
-				m.put("staffId", staffId);
-				m.put("roleId", s);
-				m.put("updateUser", updateUser);
-				addParams.add(m);
-			}
-			
-			this.customRoleMapper.insertIntoStaff(addParams);
-		}
-		
-		if(!"".equals(delRoles)){
-			String[] delRoleArr = delRoles.split(",");
-			
-			List<Map<String,Object>> delParams = new ArrayList<Map<String,Object>>();
-			for(String s : delRoleArr){
-				Map<String,Object> m = new HashMap<String,Object>();
-				m.put("staffId", staffId);
-				m.put("roleId", s);
-				delParams.add(m);
-			}
-			
-			this.customRoleMapper.deleteFromStaff(delParams);
-		}
-		
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		returnMap.put("success", true);
-		return returnMap;
-	}
-	
-	@RequestMapping("/findRights")
-	@ResponseBody
-	public Map<String, Object> findRights(HttpServletRequest request) {
-		Map<String, Object> params = RequestUtil.getRequestParams(request);
-		int pageNo = Integer.parseInt(params.get("page") + "");
-		int rows = Integer.parseInt(params.get("rows") + "");
-		params.put("start", (pageNo - 1) * rows + 1);
-		params.put("end", pageNo * rows);
-		
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		returnMap.put("success", true);
-		returnMap.put("data", this.customRoleMapper.selectRightsByPage(params));
-		return returnMap;
-	}
-	
-	
-	@RequestMapping("/check")
-	@ResponseBody
-	public Map<String, Object> checkUniqueness(HttpServletRequest request) throws Exception {
-		Map<String, Object> params = RequestUtil.getRequestParams(request);
-		
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		if(params.get("staffCode") != null){
-			returnMap.put("success", true);
-			returnMap.put("data", (this.userMapper.checkStaffCode(params)).size());
-		}else if(params.get("loginName") != null){
-			returnMap.put("success", true);
-			returnMap.put("data", (this.userMapper.checkLoginName(params)).size());
-		}else if(params.get("password") != null){
-			Staff staff = (Staff) WebUtils.getCurrLoginUser(request);
-			params.put("staffId", staff.getStaffId());
-			returnMap.put("success", true);
-			returnMap.put("data", (this.userMapper.checkPassword(params)).size());
-		}
-		return returnMap;
-	}
-	
-	@RequestMapping("/findCodes")
-	@ResponseBody
-	public Map<String, Object> findCodes(HttpServletRequest request) throws Exception {
-		Map<String, Object> params = RequestUtil.getRequestParams(request);
-		
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		returnMap.put("success", true);
-		returnMap.put("data", this.userMapper.selectCodesByType(params));
-		return returnMap;
-	}
 }

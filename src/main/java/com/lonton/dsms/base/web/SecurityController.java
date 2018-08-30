@@ -25,7 +25,6 @@ import com.lonton.dsms.common.util.WebUtils;
  * 用来获取用户菜单项等
  * @author 邓键
  */
-@Controller
 @RequestMapping(value="/base")
 public class SecurityController {
 	@Resource

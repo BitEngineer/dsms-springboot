@@ -140,7 +140,7 @@
 	</select>
 	
 	<!-- 单表查询，根据任意条件 -->
-	<select id="select" parameterType="com.lonton.dsms.sys.bean.StaffQueryDTO" resultMap="BaseResultMap">
+	<select id="select" parameterType="java.util.Map" resultMap="BaseResultMap">
 		SELECT
 			*
 	  	FROM
@@ -174,7 +174,7 @@
 	</select>
 	
 	<!-- 根据staff_id更新记录,不能更新staff_id -->
-  	<update id="updateByStaffId" parameterType="hashMap">
+  	<update id="updateByStaffId" parameterType="com.lonton.dsms.sys.bean.Staff">
   		UPDATE 
   			a_staff
   		<set>
@@ -235,7 +235,7 @@
   	
   	<!-- 插入记录 -->
   	
-  	<insert id="insert" parameterType="hashMap" >
+  	<insert id="insert" parameterType="com.lonton.dsms.sys.bean.Staff" >
   		INSERT INTO a_staff
 	  	(
 	  		staff_id
@@ -267,13 +267,23 @@
 			<if test="updateUser != null and updateUser != '' ">
 				, update_user
 			</if>
+			<!--  
 			<if test="updateTime != null and updateTime != '' ">
+				, update_time
+			</if>
+			-->
+			<if test="updateTime != null">
 				, update_time
 			</if>
 			<if test="deleteFlag != null and deleteFlag != '' ">
 				, delete_flag
 			</if>
+			<!--  
 			<if test="lockTime != null and lockTime != '' ">
+				, lock_time
+			</if>
+			-->
+			<if test="lockTime != null">
 				, lock_time
 			</if>
 	  	)
@@ -307,13 +317,23 @@
 			<if test="updateUser != null and updateUser != '' ">
 				, #{updateUser, jdbcType=VARCHAR}
 			</if>
+			<!--  
 			<if test="updateTime != null and updateTime != '' ">
+				, #{updateTime, jdbcType=TIMESTAMP}
+			</if>
+			-->
+			<if test="updateTime != null">
 				, #{updateTime, jdbcType=TIMESTAMP}
 			</if>
 			<if test="deleteFlag != null and deleteFlag != '' ">
 				, #{deleteFlag, jdbcType=VARCHAR}
 			</if>
+			<!--  
 			<if test="lockTime != null and lockTime != '' ">
+				, #{lockTime, jdbcType=TIMESTAMP}
+			</if>
+			-->
+			<if test="lockTime != null">
 				, #{lockTime, jdbcType=TIMESTAMP}
 			</if>
   		)

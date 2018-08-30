@@ -71,5 +71,5 @@ public interface UserMapper {
 	 * @return
 	 * @throws SQLException
 	 */
-	List<StaffQueryDTO> select(StaffQueryDTO params) throws SQLException;
+	List<StaffQueryDTO> select(Map<String, Object> params) throws SQLException;
 }

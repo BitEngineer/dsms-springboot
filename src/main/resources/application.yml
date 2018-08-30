@@ -7,7 +7,7 @@ spring:
   datasource:
     name: dsmsDataSource
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/dsms?characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/dsms?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
     username: root
     password: 5991215
   # spring-boot-admin-server 监控

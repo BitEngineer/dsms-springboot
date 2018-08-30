@@ -5,7 +5,7 @@
   <groupId>com.lonton.dsms</groupId>
   <artifactId>dsms-springboot</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
 
   <name>springboot-demo</name>
   <url>http://maven.apache.org</url>
@@ -47,12 +47,18 @@
         <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     -->
-    
+    <!--  
   	<dependency>
     	<groupId>de.codecentric</groupId>
     	<artifactId>spring-boot-admin-starter-client</artifactId>
     	<version>1.5.7</version>
   	</dependency>
+  	-->
+  	<dependency>
+	    <groupId>io.jsonwebtoken</groupId>
+	    <artifactId>jjwt</artifactId>
+	    <version>0.9.0</version>
+	</dependency>
   	
     
     <!-- springboot-mybatis -->

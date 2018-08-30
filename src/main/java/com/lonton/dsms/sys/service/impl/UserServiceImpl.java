@@ -2,6 +2,7 @@ package com.lonton.dsms.sys.service.impl;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,23 +65,25 @@ public class UserServiceImpl implements UserService{
 			staff.setPassword(Constants.USER_PASSWORD_DEFAULT);
 			staff.setStatus(Constants.USER_STATUS_NORMAL);
 			staff.setUserType(Constants.USER_TYPE_NORMAL);
+			// TODO orgid
+			staff.setOrgId("-1");
 			staff.setDeleteFlag(Constants.USER_DELETE_FLAG_EFFECTIVE);
 			staff.setUpdateUser(operationUserId);
 			staff.setUpdateTime(new Date());
 			
 			// 校验
 			// 用户编号staffCode唯一
-			StaffQueryDTO staffDTO = new StaffQueryDTO();
-			staffDTO.setStaffCode(staff.getStaffCode());
+			Map<String, Object> params1 = new HashMap<String, Object>();
+			params1.put("staffCode", staff.getStaffCode());
 			// 查询结果为空，返回空集合，而不是null
-			List<StaffQueryDTO> staffs = userMapper.select(staffDTO);
+			List<StaffQueryDTO> staffs = userMapper.select(params1);
 			if( staffs != null && staffs.size() > 0 ) {
 				throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_VALIDATION_EXCEPTION, "用户编号staff_code已存在");
 			}
 			// 登录名loginName唯一
-			StaffQueryDTO staffDTO_2 = new StaffQueryDTO();
-			staffDTO_2.setLoginName(staff.getLoginName());
-			List<StaffQueryDTO> staffs_2 = userMapper.select(staffDTO_2);
+			Map<String, Object> params2 = new HashMap<String, Object>();
+			params1.put("loginName", staff.getLoginName());
+			List<StaffQueryDTO> staffs_2 = userMapper.select(params2);
 			if(staffs_2 != null && staffs_2.size() > 0) {
 				throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_VALIDATION_EXCEPTION, "用户登录名login_name已存在");
 			}
