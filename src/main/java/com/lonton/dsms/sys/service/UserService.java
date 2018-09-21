@@ -20,14 +20,14 @@ public interface UserService {
 	 * 自动生成用户编号，用户编号保证在单表下唯一
 	 * @throws SQLException
 	 */
-	public String generateStaffCode() throws SQLException;
+	public String generateStaffCode();
 
 	/**
 	 * 新增用户
 	 * @param staff
 	 * @throws ServiceProcessException 
 	 */
-	public void addUser(Staff staff, String operationUserId) throws ServiceProcessException;
+	public void addUser(Staff staff, String operationUserId);
 	
 	/**
 	 * 删除用户：逻辑删除
@@ -35,7 +35,7 @@ public interface UserService {
 	 * @throws SQLException
 	 * @throws ValidationException
 	 */
-	public void delUser(String staffId, String operationUserId) throws ServiceProcessException;
+	public void delUser(String staffId, String operationUserId);
 	
 	/**
 	 * 更新用户表记录
@@ -44,7 +44,7 @@ public interface UserService {
 	 * @throws ValidationException
 	 * @throws ServiceProcessException 
 	 */
-	public void updateUser(Staff staff, String operationUserId) throws ServiceProcessException;
+	public void updateUser(Staff staff, String operationUserId);
 	
 	/**
 	 * 分页查询用户信息
@@ -54,7 +54,7 @@ public interface UserService {
 	 * @throws ValidationException 
 	 * @throws ServiceProcessException 
 	 */
-	public List<StaffQueryDTO> selectPage(Map<String, Object> staffDTO) throws ServiceProcessException;
+	public List<StaffQueryDTO> selectPage(Map<String, Object> staffDTO);
 	
 	/**
 	 * 分页查询时，符合条件的总记录数
@@ -62,8 +62,8 @@ public interface UserService {
 	 * @return
 	 * @throws SQLException
 	 */
-	public int selectPageTotal(Map<String, Object> staffDTO) throws SQLException;
+	public int selectPageTotal(Map<String, Object> staffDTO);
 	
-	public Staff selectObject(String staffId) throws Exception;
+	public Staff selectObject(String staffId);
 	
 }

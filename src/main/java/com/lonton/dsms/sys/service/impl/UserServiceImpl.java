@@ -10,9 +10,12 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lonton.dsms.common.bean.BaseResponseCode;
+import com.lonton.dsms.common.exception.BusinessException;
 import com.lonton.dsms.common.exception.ServiceProcessException;
 import com.lonton.dsms.common.exception.ValidationException;
 import com.lonton.dsms.common.util.DateUtil;
@@ -26,17 +29,14 @@ import com.lonton.dsms.sys.service.UserService;
 @Service("userService")
 public class UserServiceImpl implements UserService{
 
-
-	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-	
-	@Resource
+	@Autowired
 	private UserMapper userMapper;
 	
 	/**
 	 * 自动生成用户编号，用户编号保证在单表下唯一
 	 * @throws SQLException
 	 */
-	public String generateStaffCode() throws SQLException {
+	public String generateStaffCode() {
 		return DateUtil.format(new Date(), DateUtil.PATTERN_17);
 	}
 
@@ -49,57 +49,43 @@ public class UserServiceImpl implements UserService{
 	 * @Transactional 默认情况下只会对RumtimeException.class进行回滚，而检查异常不会回滚
 	 */
 	@Transactional
-	public void addUser(Staff staff, String operationUserId) throws ServiceProcessException {
-		try {
-			if(staff == null) {
-				throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_VALIDATION_EXCEPTION, "staff不能为空");
-			}
-			if(operationUserId == null) {
-				logger.warn("loginUser is null");
-			}
-			
-			staff.setStaffId(StringUtil.uuid());
-			staff.setStaffCode(generateStaffCode());
-			// 登录名默认与编码一致
-			staff.setLoginName(staff.getStaffCode());
-			staff.setPassword(Constants.USER_PASSWORD_DEFAULT);
-			staff.setStatus(Constants.USER_STATUS_NORMAL);
-			staff.setUserType(Constants.USER_TYPE_NORMAL);
-			// TODO orgid
-			staff.setOrgId("-1");
-			staff.setDeleteFlag(Constants.USER_DELETE_FLAG_EFFECTIVE);
-			staff.setUpdateUser(operationUserId);
-			staff.setUpdateTime(new Date());
-			
-			// 校验
-			// 用户编号staffCode唯一
-			Map<String, Object> params1 = new HashMap<String, Object>();
-			params1.put("staffCode", staff.getStaffCode());
-			// 查询结果为空，返回空集合，而不是null
-			List<StaffQueryDTO> staffs = userMapper.select(params1);
-			if( staffs != null && staffs.size() > 0 ) {
-				throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_VALIDATION_EXCEPTION, "用户编号staff_code已存在");
-			}
-			// 登录名loginName唯一
-			Map<String, Object> params2 = new HashMap<String, Object>();
-			params1.put("loginName", staff.getLoginName());
-			List<StaffQueryDTO> staffs_2 = userMapper.select(params2);
-			if(staffs_2 != null && staffs_2.size() > 0) {
-				throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_VALIDATION_EXCEPTION, "用户登录名login_name已存在");
-			}
-			
-			// 外键校验
-			// 用户机构号org_id必须来自a_org
-			
-			// 数据插入
-			userMapper.insert(staff);
-		} catch(ServiceProcessException e) {
-			throw e;
-		} catch(SQLException e) {
-			throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_SQL_EXCEPTION, "sql执行异常", e);
-		} catch(Exception e) {
-			throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_UNKNOWN_EXCEPTION, "未知异常", e);
+	public void addUser(Staff staff, String operationUserId) {
+		// 方法通常的参数校验
+		if(staff == null) {
+			throw new RuntimeException("staff is null");
 		}
+		if(operationUserId == null) {
+			throw new RuntimeException("operationUserId is null");
+		}
+		
+		// 设置非用户输入字段
+		staff.setStaffId(StringUtil.uuid());
+		staff.setStaffCode(generateStaffCode());
+		staff.setLoginName(staff.getStaffCode());  // 登录名默认与编码一致
+		staff.setPassword(Constants.USER_PASSWORD_DEFAULT);
+		staff.setStatus(Constants.USER_STATUS_NORMAL);
+		staff.setUserType(Constants.USER_TYPE_NORMAL);
+		// TODO orgid
+		staff.setOrgId("-1");
+		staff.setDeleteFlag(Constants.USER_DELETE_FLAG_EFFECTIVE);
+		staff.setUpdateUser(operationUserId);
+		staff.setUpdateTime(new Date());
+		
+		// 校验
+		// 用户编号staffCode唯一
+		Map<String, Object> params1 = new HashMap<String, Object>();
+		params1.put("staffCode", staff.getStaffCode());
+		// 查询结果为空，返回空集合，而不是null
+		List<StaffQueryDTO> staffs = userMapper.select(params1);
+		if( staffs != null && staffs.size() > 0 ) {
+			throw new BusinessException(BaseResponseCode.ERROR_51002);
+		}
+		
+		// 外键校验
+		// 用户机构号org_id必须来自a_org
+		
+		// 数据插入
+		userMapper.insert(staff);
 	}
 	
 	/**
@@ -108,8 +94,7 @@ public class UserServiceImpl implements UserService{
 	 * @throws SQLException
 	 * @throws ValidationException
 	 */
-	public void delUser(String staffId, String operationUserId) throws ServiceProcessException {
-		try {
+	public void delUser(String staffId, String operationUserId) {
 			// 避免误更新，使用新的参数：即只更新几个字段
 			Staff newStaff = new Staff();
 			newStaff.setStaffId(staffId);
@@ -117,11 +102,6 @@ public class UserServiceImpl implements UserService{
 			newStaff.setUpdateUser(operationUserId);
 			newStaff.setUpdateTime(new Date());
 			userMapper.updateByStaffId(newStaff);
-		} catch (SQLException e) {
-			throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_SQL_EXCEPTION, "sql执行异常", e);
-		} catch (Exception e) {
-			throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_UNKNOWN_EXCEPTION, "未知异常", e);
-		}
 	}
 	
 	/**
@@ -131,11 +111,7 @@ public class UserServiceImpl implements UserService{
 	 * @throws ValidationException
 	 * @throws ServiceProcessException 
 	 */
-	public void updateUser(Staff staff, String operationUserId) throws ServiceProcessException {
-		try {
-			if(staff.getStaffId() == null) {
-				throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_VALIDATION_EXCEPTION, "用户id为空");
-			}
+	public void updateUser(Staff staff, String operationUserId) {
 			
 			// 多字段之间的校验
 			// 用户状态为锁定时，锁定时间不能为空
@@ -143,13 +119,6 @@ public class UserServiceImpl implements UserService{
 			staff.setUpdateTime(new Date());
 			staff.setUpdateUser(operationUserId);
 			userMapper.updateByStaffId(staff);
-		} catch (ServiceProcessException e) {
-			throw e;
-		} catch (SQLException e) {
-			throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_SQL_EXCEPTION, "sql执行异常", e);
-		} catch (Exception e) {
-			throw new ServiceProcessException(ServiceProcessException.ERROR_CODE_UNKNOWN_EXCEPTION, "未知异常", e);
-		}
 	}
 	
 	/**
@@ -160,15 +129,9 @@ public class UserServiceImpl implements UserService{
 	 * @throws ValidationException 
 	 * @throws ServiceProcessException 
 	 */
-	public List<StaffQueryDTO> selectPage(Map<String, Object> params) throws ServiceProcessException {
+	public List<StaffQueryDTO> selectPage(Map<String, Object> params) {
 		List<StaffQueryDTO> results = null;
-		try {
 			results = userMapper.selectPage(params);
-		} catch (SQLException e) {
-			throw ServiceProcessException.instanceWrapSqlException(e);
-		} catch (Exception e) {
-			throw ServiceProcessException.instanceWrapUnkownException(e);
-		}
 		
 		return results;
 	}
@@ -180,13 +143,13 @@ public class UserServiceImpl implements UserService{
 	 * @throws SQLException
 	 */
 	@Override
-	public int selectPageTotal(Map<String, Object> params) throws SQLException {
+	public int selectPageTotal(Map<String, Object> params) {
 		int results = userMapper.selectPageTotal(params);
 		return results;
 	}
 
 	@Override
-	public Staff selectObject(String staffId) throws Exception {
+	public Staff selectObject(String staffId) {
 		return userMapper.selectObject(staffId);
 	}
 }

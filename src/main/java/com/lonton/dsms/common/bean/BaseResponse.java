@@ -8,15 +8,6 @@ import java.io.Serializable;
 public class BaseResponse implements Serializable{
 	
 	private static final long serialVersionUID = -9074409403398678672L;
-	/** 处理业务逻辑时，失败 */
-	public static final String CODE_500 = "500";
-	/** 处理业务逻辑时，成功 */
-	public static final String CODE_200 = "200";
-	
-	/** CODE_500 默认的message */
-	public static final String MSG_500 = "系统内部处理异常";
-	/** CODE_200 默认的message */
-	public static final String MSG_200 = "成功";
 	
 	private String code;
 	private String msg;
@@ -28,27 +19,35 @@ public class BaseResponse implements Serializable{
 	}
 	
 	public static BaseResponse success() {
-		return new BaseResponse(CODE_200, MSG_200);
+		return new BaseResponse(BaseResponseCode.SUCCESS.getCode(), BaseResponseCode.SUCCESS.getMsg());
 	}
 	
 	public static BaseResponse success(String msg) {
-		return new BaseResponse(CODE_200, msg);
+		return new BaseResponse(BaseResponseCode.SUCCESS.getCode(), msg);
 	}
 	
 	public static BaseResponse success(String code, String msg) {
 		return new BaseResponse(code, msg);
 	}
 	
+	public static BaseResponse success(BaseResponseCode baseResponseCode) {
+		return new BaseResponse(baseResponseCode.getCode(), baseResponseCode.getMsg());
+	}
+	
 	public static BaseResponse error() {
-		return new BaseResponse(CODE_500, MSG_500);
+		return new BaseResponse(BaseResponseCode.ERROR_50000.getCode(), BaseResponseCode.ERROR_50000.getMsg());
 	}
 	
 	public static BaseResponse error(String msg) {
-		return new BaseResponse(CODE_500, msg);
+		return new BaseResponse(BaseResponseCode.ERROR_50000.getCode(), msg);
 	}
 	
 	public static BaseResponse error(String code, String msg) {
 		return new BaseResponse(code, msg);
+	}
+	
+	public static BaseResponse error(BaseResponseCode baseResponseCode) {
+		return new BaseResponse(baseResponseCode.getCode(), baseResponseCode.getMsg());
 	}
 	
 	public BaseResponse data(Object data) {
@@ -56,44 +55,26 @@ public class BaseResponse implements Serializable{
 		return this;
 	}
 
-	/**
-	 * @return the code
-	 */
 	public String getCode() {
 		return code;
 	}
 
-	/**
-	 * @param code the code to set
-	 */
 	public void setCode(String code) {
 		this.code = code;
 	}
 
-	/**
-	 * @return the msg
-	 */
 	public String getMsg() {
 		return msg;
 	}
 
-	/**
-	 * @param msg the msg to set
-	 */
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
 
-	/**
-	 * @return the data
-	 */
 	public Object getData() {
 		return data;
 	}
 
-	/**
-	 * @param data the data to set
-	 */
 	public void setData(Object data) {
 		this.data = data;
 	}

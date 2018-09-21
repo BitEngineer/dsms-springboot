@@ -27,7 +27,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import com.lonton.dsms.common.bean.BaseResponse;
+import com.lonton.dsms.common.bean.BaseResponseCode;
 import com.lonton.dsms.common.bean.PageResponseData;
+import com.lonton.dsms.common.exception.BusinessException;
 import com.lonton.dsms.common.exception.ServiceProcessException;
 import com.lonton.dsms.common.util.RequestUtil;
 import com.lonton.dsms.common.util.WebUtils;
@@ -66,7 +68,7 @@ public class UserController {
 			Map<String, Object> params = RequestUtil.getRequestParams(request);
 			int pageNo = Integer.parseInt(((String)params.get("page")));
 			int rows = Integer.parseInt((String)params.get("pageSize"));
-			params.put("start", (pageNo - 1) * rows + 1);
+			params.put("start", (pageNo - 1) * rows);
 			params.put("pageSize", rows);
 			
 			List<StaffQueryDTO> records = userService.selectPage(params);
@@ -101,9 +103,12 @@ public class UserController {
 		try {
 			userService.addUser(staff, WebUtils.getCurrLoginUser(request).getStaffId());
 			return BaseResponse.success();
-		} catch (ServiceProcessException e) {
-			logger.error("新增用户出错", e);
-			return BaseResponse.error();
+		} catch (BusinessException e) {
+			logger.error(e.getMsg(), e);
+			return BaseResponse.error(e.getCode(), e.getMessage());
+		} catch(Throwable e) {
+			logger.error(e.getMessage(), e);
+			return BaseResponse.error(BaseResponseCode.ERROR_51001);
 		}
 	}
 

@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * 1) @SpringBootApplication
  */
 @SpringBootApplication
-@Configuration
+//@Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages={"com.lonton.dsms"})  // 组件扫描
 //@MapperScan(basePackages= {"com.lonton.dsms"})  // spring-mybatis Mapper接口扫描, @MapperScan存在的问题，会把basepackages下所有接口都扫描进入，包括service
