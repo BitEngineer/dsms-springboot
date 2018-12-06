@@ -14,7 +14,6 @@ import com.lonton.dsms.common.CommonConstants;
 
 /**
  * web相关工具类,依赖于Java Web API,及spring对web对象request的管理
- * @author 邓键
  */
 public class WebUtils {
 	

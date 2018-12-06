@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * http的request工具类
- * @author 邓键
  */
 public class RequestUtil {
 	

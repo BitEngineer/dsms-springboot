@@ -10,10 +10,6 @@ import org.apache.ibatis.annotations.Mapper;
 import com.lonton.dsms.sys.bean.Staff;
 import com.lonton.dsms.sys.bean.StaffQueryDTO;
 
-/**
- * 用户管理数据接口
- * @author 邓键
- */
 @Mapper
 public interface UserMapper {
 	

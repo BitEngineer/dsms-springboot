@@ -4,8 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 菜单项VO
- * @author 郭宇航
+ * 菜单项
  */
 public class Menu {
 	private String resId;

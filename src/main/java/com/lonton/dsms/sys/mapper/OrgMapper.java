@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 机构管理数据接口层
- * @author 邓键
  */
 @Mapper
 public interface OrgMapper {

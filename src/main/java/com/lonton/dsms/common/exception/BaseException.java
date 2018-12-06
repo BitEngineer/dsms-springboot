@@ -9,7 +9,6 @@ import com.lonton.dsms.common.util.ApplicationContextUtil;
  * 异常类<br/>
  * 异常信息文件位于：<b>message/exception.properties</b><br/>
  * 异常信息命名规范为：{@value #EXCEPTION_PREFIX} + errorCode
- * @author 郭宇航
  */
 public class BaseException extends RuntimeException {
 	private static final long serialVersionUID = 1L;

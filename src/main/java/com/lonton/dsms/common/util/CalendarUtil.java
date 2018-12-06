@@ -1,8 +1,5 @@
 package com.lonton.dsms.common.util;
 
-
-//import org.joda.time.LocalDateTime;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,9 +7,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-/**
- * Created by DavidChan on 2017/4/9.
- */
 public class CalendarUtil {
 	
 	/**

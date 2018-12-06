@@ -5,7 +5,6 @@ import java.util.List;
 
 /**
  * 资源树节点
- * @author 邓键
  */
 public class ResTreeNode {
 	private String resId;

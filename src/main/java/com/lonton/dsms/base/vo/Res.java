@@ -3,8 +3,7 @@ package com.lonton.dsms.base.vo;
 import java.util.Date;
 
 /**
- * 资源项VO
- * @author 郭宇航
+ * 资源项
  */
 public class Res {
 	private String resId;

@@ -8,9 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * 对象值
- * 
- * @author 郭宇航
+ * Object工具类
  */
 public class ObjectUtil {
 	/**

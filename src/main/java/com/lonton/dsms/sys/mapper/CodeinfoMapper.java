@@ -10,7 +10,6 @@ import org.springframework.cache.annotation.Caching;
 
 /**
  * 码表条目信息数据接口层
- * @author 郭宇航
  */
 @Mapper
 public interface CodeinfoMapper {

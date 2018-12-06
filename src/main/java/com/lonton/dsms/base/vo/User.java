@@ -6,8 +6,7 @@ import java.util.List;
 import com.lonton.dsms.sys.bean.Staff;
 
 /**
- * 用户VO
- * @author 邓键
+ * 用户
  */
 public class User extends Staff implements Serializable {
 	private static final long serialVersionUID = 6462363694593416554L;

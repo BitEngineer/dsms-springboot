@@ -4,7 +4,6 @@ import com.lonton.dsms.common.bean.BaseResponseCode;
 
 /**
  * 基础业务异常，该异常通常用于与用户操作相关，通常而言就是，提醒用户错误信息
- * @author Administrator
  *
  */
 public class BusinessException extends RuntimeException{

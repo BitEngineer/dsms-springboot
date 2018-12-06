@@ -4,8 +4,6 @@ import java.util.UUID;
 
 /**
  * 字符串工具类
- * 
- * @author 郭宇航
  */
 public class StringUtil {
 

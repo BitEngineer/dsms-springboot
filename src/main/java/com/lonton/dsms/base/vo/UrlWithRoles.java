@@ -6,7 +6,6 @@ import java.util.List;
  * URL及可访问其的角色<br/>
  * 通过SecurityManager加载
  * 仅加载相对路径地址
- * @author 郭宇航
  */
 public class UrlWithRoles {
 

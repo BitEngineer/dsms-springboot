@@ -8,7 +8,6 @@ import org.springframework.cache.annotation.CacheEvict;
 
 /**
  * 资源管理接口层
- * @author 谭琛，郭宇航
  */
 @Mapper
 public interface ResMapper {

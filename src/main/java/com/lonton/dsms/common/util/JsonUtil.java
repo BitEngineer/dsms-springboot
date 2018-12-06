@@ -10,8 +10,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /**
  * JSON工具包
- * 
- * @author 郭宇航
  */
 public class JsonUtil {
 	public static String toPrettyJsonString(Object obj) throws Exception {

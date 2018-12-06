@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 码表类型管理数据接口层
- * @author 郭宇航
  */
 @Mapper
 public interface CodetypeMapper {

@@ -11,7 +11,6 @@ import com.lonton.dsms.base.vo.User;
 
 /**
  * 用户登录相关的数据库访问接口
- * @author 邓键
  */
 @Mapper
 public interface SecurityMapper{

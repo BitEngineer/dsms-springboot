@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-// 使用该注解将mapper注入到spring
 @Mapper
 public interface RoleMapper {
     long countByExample(RoleExample example);

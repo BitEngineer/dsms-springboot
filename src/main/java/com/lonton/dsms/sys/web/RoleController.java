@@ -18,8 +18,7 @@ import com.lonton.dsms.common.exception.ServiceProcessException;
 import com.lonton.dsms.common.util.WebUtils;
 
 /**
- * 角色管理控制器
- * @author 邓键
+ * 角色管理
  *
  */
 @Controller

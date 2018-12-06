@@ -2,7 +2,6 @@ package com.lonton.dsms.common.exception;
 
 /**
  * 业务处理异常，为检查异常，建议在service层抛出，在web层捕获并处理
- * @author 邓键
  *
  */
 public class ServiceProcessException extends Exception{

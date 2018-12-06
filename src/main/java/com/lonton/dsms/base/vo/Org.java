@@ -2,11 +2,6 @@ package com.lonton.dsms.base.vo;
 
 import java.util.Date;
 
-/**
- * @see 机构VO
- * @author 雷     磊
- *
- */
 public class Org {
 	/**
 	 * @see 全行汇总

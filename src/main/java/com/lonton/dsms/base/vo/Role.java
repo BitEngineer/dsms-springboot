@@ -2,6 +2,10 @@ package com.lonton.dsms.base.vo;
 
 import java.util.Date;
 
+/**
+ * 角色
+ *
+ */
 public class Role{
 
 	/**角色编号**/

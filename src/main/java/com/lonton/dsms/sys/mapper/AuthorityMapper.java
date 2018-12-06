@@ -9,7 +9,6 @@ import com.lonton.dsms.base.vo.Res;
 
 /**
  * 授权管理-数据库访问接口
- * @author 郭宇航
  */
 @Mapper
 public interface AuthorityMapper {

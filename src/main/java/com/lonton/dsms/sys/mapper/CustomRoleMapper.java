@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 用户角色管理模块数据接口
- * @author 邓键，郭宇航
  */
 @Mapper
 public interface CustomRoleMapper {

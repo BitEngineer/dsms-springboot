@@ -9,7 +9,6 @@ import java.util.Map;
 
 /**
  * 日期工具类
- * @author 郭宇航
  */
 public final class DateUtil {
 	public static final String DEFAULT_PATTERN = "yyyy-MM-dd";
