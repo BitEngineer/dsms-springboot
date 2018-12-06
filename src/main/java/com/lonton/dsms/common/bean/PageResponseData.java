@@ -11,8 +11,6 @@ public class PageResponseData<T> {
 		this.records = records;
 	}
 
-	
-	
 	public int getTotal() {
 		return total;
 	}

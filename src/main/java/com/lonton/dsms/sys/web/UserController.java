@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,23 +26,23 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import com.lonton.dsms.common.bean.BaseResponse;
 import com.lonton.dsms.common.bean.BaseResponseCode;
 import com.lonton.dsms.common.bean.PageResponseData;
 import com.lonton.dsms.common.exception.BusinessException;
-import com.lonton.dsms.common.exception.ServiceProcessException;
 import com.lonton.dsms.common.util.RequestUtil;
 import com.lonton.dsms.common.util.WebUtils;
 
 /**
- * 用户管理控制器
- * @author 邓键
+ * 用户管理
  *
  */
 @Controller
-@RequestMapping(value="/app/user")
-@Api(value="/app/user")
+@RequestMapping(value="/api/app/user")
+@Api(value="/api/app/user")
 public class UserController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -49,15 +50,17 @@ public class UserController {
 	@Resource
 	private UserService userService;
 	
-	@RequestMapping(value="/page", method=RequestMethod.GET)
+	@RequestMapping(value="/page", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "分页查询用户信息")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name="page", value = "页码", required = true, paramType = "query", dataType = "String"),
 		@ApiImplicitParam(name="pageSize", value = "每页的数据量", required = true, paramType = "query", dataType = "String"),
-		@ApiImplicitParam(name="page", value = "用户编码", required = false, paramType = "query", dataType = "String"),
-		@ApiImplicitParam(name="page", value = "用户姓名", required = false, paramType = "query", dataType = "String")
+		@ApiImplicitParam(name="staffCode", value = "用户编码", required = false, paramType = "query", dataType = "String"),
+		@ApiImplicitParam(name="staffName", value = "用户姓名", required = false, paramType = "query", dataType = "String")
 	})
+	@ApiResponses({
+		@ApiResponse(response=BaseResponse.class, code = 200, message = "成功") })
 	public BaseResponse page(
 			@RequestParam(name="page", required=true) String page,
 			@RequestParam(name="pageSize", required=true) String pageSize,
@@ -80,10 +83,11 @@ public class UserController {
 		}
 	}
 	
-	@RequestMapping(value="/{staffId}", method=RequestMethod.GET)
+	@RequestMapping(value="/{staffId}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "查询指定用户信息")
 	@ApiImplicitParam(name="staffId", value = "用户id", required = true, paramType = "path", dataType = "String")
+	@ApiResponse(response=BaseResponse.class, code = 200, message = "成功")
 	public BaseResponse query(HttpServletRequest request, @PathVariable(name="staffId") String staffId) {
 		try {
 			Staff resultData = userService.selectObject(staffId);
@@ -96,9 +100,10 @@ public class UserController {
 	}
 	
 	
-	@RequestMapping(value="", method=RequestMethod.POST)
+	@RequestMapping(value="", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "新增用户")
+	@ApiResponse(response=BaseResponse.class, code = 200, message = "成功")
 	public BaseResponse add(@ApiParam @RequestBody Staff staff, HttpServletRequest request) {
 		try {
 			userService.addUser(staff, WebUtils.getCurrLoginUser(request).getStaffId());
@@ -112,10 +117,11 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping(value="/{staffId}", method=RequestMethod.DELETE)
+	@RequestMapping(value="/{staffId}", method=RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "查询指定用户信息")
+	@ApiOperation(value = "删除指定用户信息")
 	@ApiImplicitParam(name="staffId", value = "用户id", required = true, paramType = "path", dataType = "String")
+	@ApiResponse(response=BaseResponse.class, code = 200, message = "成功")
 	public BaseResponse del(HttpServletRequest request, @PathVariable String staffId) {
 		try {
 			userService.delUser(staffId, WebUtils.getCurrLoginUser(request).getStaffId());
@@ -132,9 +138,10 @@ public class UserController {
 	 * @param staff
 	 * @return
 	 */
-	@RequestMapping(value="", method=RequestMethod.PUT)
+	@RequestMapping(value="", method=RequestMethod.PUT, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "更新用户信息")
+	@ApiResponse(response=BaseResponse.class, code = 200, message = "成功")
 	public BaseResponse edit(HttpServletRequest request, @ApiParam @RequestBody Staff staff) {
 		try {
 			userService.updateUser(staff, WebUtils.getCurrLoginUser(request).getStaffId());

@@ -29,32 +29,7 @@
 		<result property="ext5" column="ext5" jdbcType="VARCHAR" />
 	</resultMap>
 
-	<resultMap id="BaseResultMap" type="com.lonton.dsms.sys.bean.StaffQueryDTO">
-		<!-- A_Staff 表字段映射 -->
-		<result property="staffId" column="staff_id" jdbcType="VARCHAR" />
-		<result property="staffCode" column="staff_code" jdbcType="VARCHAR" />
-		<result property="staffName" column="staff_name" jdbcType="VARCHAR" />
-		<result property="loginName" column="login_name" jdbcType="VARCHAR" />
-		<result property="password" column="password" jdbcType="VARCHAR"/>
-		<result property="orgId" column="org_id" jdbcType="VARCHAR"/>
-		<result property="userType" column="user_type" jdbcType="VARCHAR"/>
-		<result property="status" column="status" jdbcType="VARCHAR"/>
-		<result property="idCardNo" column="id_card_no" jdbcType="VARCHAR" />
-		<result property="birthday" column="birthday" jdbcType="VARCHAR" />
-		<result property="sex" column="sex" jdbcType="VARCHAR" />
-		<result property="phone" column="phone" jdbcType="VARCHAR" />
-		<result property="email" column="email" jdbcType="VARCHAR" />
-		<result property="address" column="address" jdbcType="VARCHAR" />
-		<result property="updateUser" column="update_user" jdbcType="VARCHAR" />
-		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
-		<result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR" />
-		<result property="lockTime" column="lock_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
-		<result property="ext1" column="ext1" jdbcType="VARCHAR" />
-		<result property="ext2" column="ext2" jdbcType="VARCHAR" />
-		<result property="ext3" column="ext3" jdbcType="VARCHAR" />
-		<result property="ext4" column="ext4" jdbcType="VARCHAR" />
-		<result property="ext5" column="ext5" jdbcType="VARCHAR" />
-		<!-- A_ORG 表中的字段映射 -->
+	<resultMap id="BaseResultMap" type="com.lonton.dsms.sys.bean.StaffQueryDTO" extends="BaseStaffResultMap">
 		<result property="orgName" column="org_name" jdbcType="VARCHAR"/>
 	</resultMap>
 	

@@ -14,7 +14,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 /**
  * 将用户id存储到JWT的payload中{"userId":}
- * @author Administrator
  *
  */
 public class JwtUtils {

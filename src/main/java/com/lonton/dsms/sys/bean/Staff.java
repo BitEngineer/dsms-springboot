@@ -1,16 +1,12 @@
 package com.lonton.dsms.sys.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+public class Staff implements Serializable{
 
-import org.hibernate.validator.constraints.Length;
-
-import com.lonton.dsms.sys.validation.StaffValidationGroup;
-
-public class Staff {
-
+	private static final long serialVersionUID = -6637961109302316663L;
+	
 	/**用户编号**/
 	private String staffId;
 	/**用户代码**/
@@ -47,7 +43,6 @@ public class Staff {
 	private String deleteFlag;
 	/**锁定时间**/
 	private Date lockTime;
-	
 	/**
 	 * @return the staffId
 	 */
@@ -264,4 +259,5 @@ public class Staff {
 	public void setLockTime(Date lockTime) {
 		this.lockTime = lockTime;
 	}
+	
 }
