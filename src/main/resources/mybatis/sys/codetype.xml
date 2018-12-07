@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.lonton.dsms.app.mapper.CodetypeMapper" >
+<mapper namespace="com.dengjian.gomars.app.mapper.CodetypeMapper" >
 	<resultMap id="BaseResultMap" type="hashMap" >
 		<result property="codetypeId" column="CODETYPE_ID" jdbcType="VARCHAR" />
 		<result property="codetypeCode" column="CODETYPE_CODE" jdbcType="VARCHAR" />

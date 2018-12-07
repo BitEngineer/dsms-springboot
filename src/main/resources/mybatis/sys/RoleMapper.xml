@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lonton.dsms.sys.mapper.RoleMapper">
-  <resultMap id="BaseResultMap" type="com.lonton.dsms.sys.bean.Role">
+<mapper namespace="com.dengjian.gomars.sys.mapper.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.dengjian.gomars.sys.bean.Role">
     <id column="ROLE_ID" jdbcType="VARCHAR" property="roleId" />
     <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
@@ -75,7 +75,7 @@
     ROLE_ID, ROLE_NAME, DESCRIPTION, ORG_CLASS, UPDATE_USER, UPDATE_TIME, DELETE_FLAG, 
     EXT1, EXT2, EXT3
   </sql>
-  <select id="selectByExample" parameterType="com.lonton.dsms.sys.bean.RoleExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.dengjian.gomars.sys.bean.RoleExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -100,13 +100,13 @@
     delete from a_role
     where ROLE_ID = #{roleId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.lonton.dsms.sys.bean.RoleExample">
+  <delete id="deleteByExample" parameterType="com.dengjian.gomars.sys.bean.RoleExample">
     delete from a_role
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.lonton.dsms.sys.bean.Role">
+  <insert id="insert" parameterType="com.dengjian.gomars.sys.bean.Role">
     insert into a_role (ROLE_ID, ROLE_NAME, DESCRIPTION, 
       ORG_CLASS, UPDATE_USER, UPDATE_TIME, 
       DELETE_FLAG, EXT1, EXT2, 
@@ -116,7 +116,7 @@
       #{deleteFlag,jdbcType=CHAR}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, 
       #{ext3,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.lonton.dsms.sys.bean.Role">
+  <insert id="insertSelective" parameterType="com.dengjian.gomars.sys.bean.Role">
     insert into a_role
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="roleId != null">
@@ -183,7 +183,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.lonton.dsms.sys.bean.RoleExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.dengjian.gomars.sys.bean.RoleExample" resultType="java.lang.Long">
     select count(*) from a_role
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -243,7 +243,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.lonton.dsms.sys.bean.Role">
+  <update id="updateByPrimaryKeySelective" parameterType="com.dengjian.gomars.sys.bean.Role">
     update a_role
     <set>
       <if test="roleName != null">
@@ -276,7 +276,7 @@
     </set>
     where ROLE_ID = #{roleId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.lonton.dsms.sys.bean.Role">
+  <update id="updateByPrimaryKey" parameterType="com.dengjian.gomars.sys.bean.Role">
     update a_role
     set ROLE_NAME = #{roleName,jdbcType=VARCHAR},
       DESCRIPTION = #{description,jdbcType=VARCHAR},

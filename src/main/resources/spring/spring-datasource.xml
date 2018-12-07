@@ -64,7 +64,7 @@
 	<!--  
 	<aop:config>
 		<aop:pointcut id="pointcut"
-			expression="execution(* com.lonton.dsms.web..*.*(..))" />
+			expression="execution(* com.dengjian.gomars.web..*.*(..))" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut" />
 	</aop:config>
 	-->

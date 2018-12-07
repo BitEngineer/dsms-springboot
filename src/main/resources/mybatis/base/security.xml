@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.lonton.dsms.base.mapper.SecurityMapper" >
-	<resultMap id="staffMap" type="com.lonton.dsms.base.vo.User" >
+<mapper namespace="com.dengjian.gomars.base.mapper.SecurityMapper" >
+	<resultMap id="staffMap" type="com.dengjian.gomars.base.vo.User" >
 		<id property="staffId" column="staff_id" jdbcType="VARCHAR" />
 		<result property="staffCode" column="staff_code" jdbcType="VARCHAR" />
 		<result property="staffName" column="staff_name" jdbcType="VARCHAR" />
@@ -22,7 +22,7 @@
 		<result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR" />
 		<result property="lockTime" column="lock_time" jdbcType="TIMESTAMP" javaType="java.sql.Date"/>
 		
-		<collection property="roles" ofType="com.lonton.dsms.base.vo.Role">
+		<collection property="roles" ofType="com.dengjian.gomars.base.vo.Role">
 			<id property="roleId" column="role_id" jdbcType="VARCHAR"/>
 			<result property="roleName" column="role_name" jdbcType="VARCHAR"/>
 			<result property="description" column="description" jdbcType="VARCHAR"/> 
@@ -36,12 +36,12 @@
 		</collection>
 	</resultMap>
 	
-	<resultMap id="urlWithRolesMap" type="com.lonton.dsms.base.vo.UrlWithRoles" >
+	<resultMap id="urlWithRolesMap" type="com.dengjian.gomars.base.vo.UrlWithRoles" >
 		<id property="url" column="url" jdbcType="VARCHAR" />
 		<collection property="roleIds" column="role_id" jdbcType="VARCHAR" javaType="list" ofType="String"/>
 	</resultMap>
 	
-	<resultMap id="resMap" type="com.lonton.dsms.base.vo.Res" >
+	<resultMap id="resMap" type="com.dengjian.gomars.base.vo.Res" >
 		<id property="resId" column="res_id" jdbcType="VARCHAR" />
 		<result property="resCode" column="RES_CODE" jdbcType="VARCHAR" />
 		<result property="resName" column="RES_NAME" jdbcType="VARCHAR" />

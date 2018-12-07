@@ -11,16 +11,16 @@
                         http://www.springframework.org/schema/mvc  
                         http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 	<!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->
-	<context:component-scan base-package="com.lonton.dsms.**.web" />
+	<context:component-scan base-package="com.dengjian.gomars.**.web" />
 	
 	<!--默认的mvc注解映射的支持 -->
     <context:annotation-config />
     
-    <bean class="com.lonton.dsms.common.json.SerializeConfigFactoryBean"></bean>
+    <bean class="com.dengjian.gomars.common.json.SerializeConfigFactoryBean"></bean>
     
     <mvc:annotation-driven>
     	<mvc:message-converters register-defaults="true">
-   			<bean class="com.lonton.dsms.common.json.FastJsonHttpMessageConverter">
+   			<bean class="com.dengjian.gomars.common.json.FastJsonHttpMessageConverter">
 		    </bean>
     	</mvc:message-converters>
     </mvc:annotation-driven>
@@ -44,7 +44,7 @@
         </property>
         <property name="defaultViews">
             <list>
-                <bean class="com.lonton.dsms.common.json.FastJsonView" >
+                <bean class="com.dengjian.gomars.common.json.FastJsonView" >
    				</bean>
             </list>
         </property>
@@ -82,14 +82,14 @@
 	
 	<!-- ehcache缓存过滤器，缓存http请求 -->
 	<!--  
-	<bean id="httpCacheFilter" class="com.lonton.dsms.common.filter.HttpCacheFilter"/>
+	<bean id="httpCacheFilter" class="com.dengjian.gomars.common.filter.HttpCacheFilter"/>
 	-->
 	<!-- webService过滤器
 		将形如：/ws/ws-query/method/{jsonparam}的url，
 		映射为：/query/method.do的Post请求，并将json入参中所有项转化为request中的请求
 	 -->
 	 <!--  
-	<bean id="webServiceFilter" class="com.lonton.dsms.base.filter.WebServiceFilter"/>
+	<bean id="webServiceFilter" class="com.dengjian.gomars.base.filter.WebServiceFilter"/>
 	-->
 	
     <!-- 对静态资源文件的访问 -->

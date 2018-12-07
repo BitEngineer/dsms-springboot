@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.lonton.dsms.sys.mapper.AuthorityMapper" >
+<mapper namespace="com.dengjian.gomars.sys.mapper.AuthorityMapper" >
     <!-- 资源映射表 -->
-    <resultMap id="resMap" type="com.lonton.dsms.base.vo.Res" >
+    <resultMap id="resMap" type="com.dengjian.gomars.base.vo.Res" >
 		<result property="resId" column="res_id" jdbcType="VARCHAR" />
 		<result property="resCode" column="res_code" jdbcType="VARCHAR" />
 		<result property="resName" column="res_name" jdbcType="VARCHAR" />

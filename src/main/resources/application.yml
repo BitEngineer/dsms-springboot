@@ -1,6 +1,6 @@
 server:
   port: 9090
-  context-path: /dsms
+  context-path: /gomars
 
 spring:
   # 数据源，使用tomcat默认数据源
